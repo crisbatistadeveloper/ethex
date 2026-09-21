@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ethex — Em breve</title>
+  <meta name="description" content="Tecnologia, análise de dados e consultoria especializada para compradores de imóveis. Exclusivamente para compradores.">
+  <meta name="theme-color" content="#071626">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy-950: #050f1b;
+      --navy-900: #071626;
+      --navy-800: #0b1f34;
+      --gold: #d6b072;
+      --white: #ffffff;
+      --muted: rgba(255, 255, 255, 0.78);
+      --line: rgba(255, 255, 255, 0.16);
+      --gutter: clamp(20px, 6vw, 88px);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--navy-900);
+      color: var(--white);
+      font-family: "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page { position: relative; min-height: 100svh; overflow: hidden; isolation: isolate; }
+
+    /* Palco do topo (logo + hero): a foto ocupa só esta área e se dissolve no azul nas bordas,
+       então os pilares e o rodapé ficam sobre azul liso. */
+    .stage { position: relative; isolation: isolate; }
+    .stage::before,
+    .stage::after { content: ""; position: absolute; inset: 0; pointer-events: none; }
+
+    /* Foto: metade direita no desktop, ancorada à direita. */
+    .stage::before {
+      z-index: -2;
+      left: auto;
+      width: min(82%, 1145px);
+      background:
+        url("assets/hero.webp") 45% 42% / cover no-repeat,
+        radial-gradient(90% 70% at 70% 35%, #16324f 0%, rgba(11, 31, 52, 0) 60%);
+      /* A foto se dissolve sozinha na borda esquerda: sem emenda, em qualquer largura de tela. */
+      -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.3) 18%, #000 58%);
+      mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.3) 18%, #000 58%);
+    }
+
+    /* Véu: leve sombra atrás do texto e escurecimento de topo/base (legibilidade + transição). */
+    .stage::after {
+      z-index: -1;
+      background:
+        linear-gradient(90deg, rgba(7, 22, 38, 0.55) 0%, rgba(7, 22, 38, 0) 55%),
+        linear-gradient(180deg, rgba(7, 22, 38, 0.55) 0%, rgba(7, 22, 38, 0) 20%, rgba(7, 22, 38, 0) 72%, var(--navy-900) 100%);
+    }
+
+    .container { width: 100%; max-width: 1320px; margin-inline: auto; padding-inline: var(--gutter); }
+
+    /* ---------- topo ---------- */
+    .topbar { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; padding-top: clamp(28px, 5vw, 64px); }
+
+    .brand { display: block; line-height: 0; }
+    .brand img { display: block; width: clamp(210px, 38vw, 440px); height: auto; }
+
+    .nav { display: flex; gap: clamp(16px, 3vw, 44px); padding-top: 8px; font-size: 0.72rem; letter-spacing: 0.2em; font-weight: 500; }
+    .nav span { padding-bottom: 8px; color: var(--muted); }
+    .nav span:first-child { color: var(--white); border-bottom: 2px solid var(--gold); }
+
+    /* ---------- hero ---------- */
+    .hero { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 32px; padding-block: clamp(48px, 9vw, 120px) clamp(48px, 7vw, 96px); }
+    .hero-copy { max-width: 560px; }
+    .rule { width: 56px; height: 3px; background: var(--gold); margin-bottom: clamp(20px, 3vw, 36px); }
+    h1 { margin: 0; font-weight: 800; line-height: 0.94; font-size: clamp(4rem, 13vw, 8.6rem); letter-spacing: -0.01em; }
+    h1 .gold { color: var(--gold); display: block; }
+    .lead { margin: clamp(20px, 3vw, 32px) 0 0; font-weight: 400; text-transform: uppercase; letter-spacing: 0.22em; line-height: 1.7; font-size: clamp(1rem, 2.4vw, 1.55rem); }
+    .lead-text { margin: clamp(20px, 3vw, 32px) 0 0; max-width: 430px; line-height: 1.8; letter-spacing: 0.06em; font-weight: 300; font-size: clamp(0.92rem, 1.7vw, 1.08rem); color: var(--muted); }
+
+    .signup { display: flex; margin-top: clamp(28px, 4vw, 44px); max-width: 480px; border: 1px solid rgba(255, 255, 255, 0.4); background: rgba(5, 15, 27, 0.55); backdrop-filter: blur(4px); }
+    .signup:focus-within { border-color: var(--gold); }
+    .signup-icon { display: grid; place-items: center; width: 58px; flex: none; border-right: 1px solid rgba(255, 255, 255, 0.4); }
+    .signup input[type="email"] { flex: 1; min-width: 0; padding: 0 16px; height: 62px; background: transparent; border: 0; outline: 0; color: var(--white); font: inherit; font-size: 0.95rem; letter-spacing: 0.04em; }
+    .signup input::placeholder { color: rgba(255, 255, 255, 0.6); }
+    .signup button { width: 68px; flex: none; border: 0; cursor: pointer; background: var(--gold); color: var(--navy-900); display: grid; place-items: center; transition: filter 0.15s; }
+    .signup button:hover:not(:disabled) { filter: brightness(1.08); }
+    .signup button:disabled { cursor: progress; opacity: 0.7; }
+    .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+
+    .secure { display: flex; align-items: center; gap: 12px; margin: 18px 0 0; font-size: 0.85rem; letter-spacing: 0.04em; color: var(--muted); }
+    .consent { margin: 8px 0 0 28px; font-size: 0.72rem; line-height: 1.6; color: rgba(255, 255, 255, 0.55); max-width: 420px; }
+    .status { min-height: 1.4em; margin: 14px 0 0; font-size: 0.9rem; letter-spacing: 0.03em; }
+    .status.ok { color: var(--gold); }
+    .status.err { color: #ffb4a8; }
+
+    .quote { align-self: center; display: none; max-width: 230px; padding: 22px 26px 24px; background: rgba(7, 22, 38, 0.5); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.1); text-shadow: 0 1px 10px rgba(0, 0, 0, 0.5); text-transform: uppercase; font-size: 0.78rem; letter-spacing: 0.3em; line-height: 2.05; font-weight: 400; }
+    .quote::after { content: ""; display: block; width: 56px; height: 3px; background: var(--gold); margin-top: 22px; }
+
+    /* ---------- pilares ---------- */
+    .pillars { border-top: 0; padding-bottom: clamp(32px, 5vw, 56px); }
+    .pillars ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); }
+    .pillar { padding: 8px clamp(14px, 2.4vw, 32px); text-align: center; border-left: 1px solid var(--line); }
+    .pillar:first-child { border-left: 0; }
+    .pillar svg { width: 44px; height: 44px; stroke: var(--gold); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; margin-bottom: 18px; }
+    .pillar h3 { margin: 0 0 10px; font-size: 0.8rem; letter-spacing: 0.2em; font-weight: 600; text-transform: uppercase; line-height: 1.5; }
+    .pillar p { margin: 0 auto; max-width: 170px; font-size: 0.86rem; line-height: 1.55; font-weight: 300; color: var(--muted); }
+
+    /* ---------- rodapé ---------- */
+    .footer { border-top: 1px solid var(--line); padding-block: 28px 36px; }
+    .footer-inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; }
+    .footer-brand { display: flex; align-items: center; gap: clamp(16px, 3vw, 32px); }
+    .footer .brand img { width: clamp(120px, 14vw, 170px); }
+    .footer-divider { width: 1px; height: 44px; background: var(--line); }
+    .footer-text { font-size: 0.62rem; letter-spacing: 0.26em; line-height: 2; text-transform: uppercase; color: var(--muted); }
+    .footer-right { display: flex; flex-direction: column; align-items: flex-end; gap: 14px; }
+    .socials { display: flex; gap: 22px; }
+    .socials svg { width: 24px; height: 24px; stroke: var(--white); fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+    .footer-motto { font-size: 0.6rem; letter-spacing: 0.24em; text-transform: uppercase; text-align: right; color: var(--muted); line-height: 1.9; }
+
+    /* ---------- responsivo ---------- */
+    /* Desktop: o topo ocupa a primeira tela inteira, com o texto centralizado na vertical
+       e escalas menores, para o campo de e-mail aparecer sem rolar. */
+    @media (min-width: 900px) {
+      .quote { display: block; margin-right: clamp(0px, 4vw, 64px); }
+      .stage { display: flex; min-height: min(100svh, 1000px); }
+      .stage > .container { display: flex; flex-direction: column; }
+      .stage .hero { flex: 1; padding-block: clamp(16px, 2.5vw, 40px) clamp(40px, 5vw, 72px); }
+      .hero-copy { max-width: 600px; }
+      h1 { font-size: clamp(4rem, 7vw, 6.6rem); }
+      .lead { font-size: clamp(1rem, 1.5vw, 1.3rem); }
+      .brand img { width: clamp(220px, 24vw, 340px); }
+    }
+
+    /* Notebooks e telas baixas: escalas menores para o campo de e-mail continuar na primeira tela. */
+    @media (min-width: 900px) and (max-height: 820px) {
+      .topbar { padding-top: 28px; }
+      .brand img { width: clamp(190px, 21vw, 280px); }
+      .rule { margin-bottom: 18px; }
+      h1 { font-size: clamp(3.4rem, 11.5vh, 5.6rem); }
+      .lead { margin-top: 18px; }
+      .lead-text { margin-top: 16px; }
+      .signup { margin-top: 22px; }
+      .stage .hero { padding-block: 28px 24px; }
+    }
+
+    @media (max-width: 899px) {
+      /* Celular/tablet: a foto vira o fundo do palco inteiro, com a casa (lado direito da imagem) à vista. */
+      .stage::before { width: 100%; background-position: 80% 30%, 0 0; -webkit-mask-image: none; mask-image: none; }
+      .stage::after {
+        background:
+          linear-gradient(90deg, rgba(7, 22, 38, 0.9) 0%, rgba(7, 22, 38, 0.72) 50%, rgba(7, 22, 38, 0.3) 100%),
+          linear-gradient(180deg, rgba(7, 22, 38, 0.55) 0%, rgba(7, 22, 38, 0) 16%, rgba(7, 22, 38, 0) 62%, var(--navy-900) 100%);
+      }
+      .hero { grid-template-columns: 1fr; }
+      .pillars ul { grid-template-columns: repeat(2, 1fr); row-gap: 32px; }
+      .pillar:nth-child(3) { border-left: 0; }
+    }
+
+    @media (max-width: 560px) {
+      .nav { display: none; }
+      .signup input[type="email"] { height: 56px; }
+      .signup-icon { width: 50px; }
+      .signup button { width: 60px; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+      .footer-right { align-items: flex-start; }
+      .footer-motto { text-align: left; }
+    }
+
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="stage">
+    <div class="container">
+      <header class="topbar">
+        <a class="brand" href="./">
+          <img src="assets/logo.png" width="460" height="151" alt="Ethex — Inteligência ao seu lado. Exclusivamente para compradores">
+        </a>
+        <nav class="nav" aria-hidden="true">
+          <span>ANÁLISE</span>
+          <span>ESTRATÉGIA</span>
+          <span>CONQUISTA</span>
+        </nav>
+      </header>
+
+      <main class="hero">
+        <div class="hero-copy">
+          <div class="rule"></div>
+          <h1>EM <span class="gold">BREVE</span></h1>
+          <p class="lead">Uma nova forma de comprar imóveis está a caminho.</p>
+          <p class="lead-text">Tecnologia, análise de dados e consultoria especializada para compradores que buscam mais clareza, segurança e melhores decisões.</p>
+
+          <form class="signup" id="signup" novalidate>
+            <span class="signup-icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="m3.5 6.5 8.5 7 8.5-7"/></svg>
+            </span>
+            <input type="email" id="email" name="email" placeholder="Receba as novidades" autocomplete="email" inputmode="email" maxlength="254" aria-label="Seu e-mail" required>
+            <input class="hp" type="text" id="site" name="site" tabindex="-1" autocomplete="off" aria-hidden="true">
+            <button type="submit" id="submit" aria-label="Cadastrar e-mail">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16m-6-6 6 6-6 6"/></svg>
+            </button>
+          </form>
+          <p class="status" id="status" role="status" aria-live="polite"></p>
+          <p class="secure">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+            Seus dados estão seguros.
+          </p>
+          <p class="consent">Ao se cadastrar, você concorda em receber novidades da Ethex por e-mail e pode cancelar quando quiser.</p>
+        </div>
+
+        <aside class="quote" aria-hidden="true">Bons negócios começam com as perguntas certas.</aside>
+      </main>
+    </div>
+    </div>
+
+    <section class="pillars" id="pilares" aria-label="Nossos pilares">
+      <div class="container">
+        <ul>
+          <li class="pillar">
+            <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M6 42h36"/><path d="M10 42V28h7v14"/><path d="M20.5 42V18h7v24"/><path d="M31 42V8h7v34"/></svg>
+            <h3>Dados reais</h3>
+            <p>Análises para decisões melhores.</p>
+          </li>
+          <li class="pillar">
+            <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 5 8 11v11c0 10 6.5 17.5 16 21 9.5-3.5 16-11 16-21V11z"/><path d="m16.5 24 5.5 5.5 10-11"/></svg>
+            <h3>Compra segura</h3>
+            <p>Ao seu lado em todo o processo.</p>
+          </li>
+          <li class="pillar">
+            <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="15" r="8"/><path d="M8 42c0-9 7-15 16-15s16 6 16 15"/></svg>
+            <h3>Sem conflito<br>de interesses</h3>
+            <p>Não representamos vendedores.</p>
+          </li>
+          <li class="pillar">
+            <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="22" cy="26" r="16"/><circle cx="22" cy="26" r="9"/><circle cx="22" cy="26" r="2.5"/><path d="m24.5 23.5 15-15"/><path d="M34 6.5v6.5h6.5"/></svg>
+            <h3>Foco em você</h3>
+            <p>Mais clareza, mais tranquilidade, mais patrimônio.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container footer-inner">
+        <div class="footer-brand">
+          <div class="brand">
+            <img src="assets/logo-marca.png" width="460" height="95" alt="Ethex">
+          </div>
+          <span class="footer-divider" aria-hidden="true"></span>
+          <div class="footer-text">Proptech | Consultoria imobiliária<br>Exclusivamente para compradores</div>
+        </div>
+        <div class="footer-right">
+          <!-- Redes sociais: trocar <span> por <a href="URL"> quando os perfis existirem. -->
+          <div class="socials">
+            <span aria-label="Instagram"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.6" fill="#fff"/></svg></span>
+            <span aria-label="LinkedIn"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2.5"/><path d="M8 10.5V16M8 7.6v.1M12 16v-5.5m0 2c0-1.4 1-2 2.2-2S16 11.4 16 13v3"/></svg></span>
+            <span aria-label="YouTube"><svg viewBox="0 0 24 24"><rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="m10 9.2 5 2.8-5 2.8z" fill="#fff"/></svg></span>
+          </div>
+          <div class="footer-motto">Grandes conquistas<br>começam com boas decisões.</div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      var SUPABASE_URL = "https://dpfiugqvozouoyfcsjbj.supabase.co";
+      // Chave pública (anon): pode ficar no navegador. A tabela `lead` só aceita INSERT (RLS).
+      var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRwZml1Z3F2b3pvdW95ZmNzamJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk3MjA1ODcsImV4cCI6MjEwNTI5NjU4N30.20R6MLkcu3INod2HlPCuxfFCUZejUOWMxLI2S_1aAWg";
+
+      var form = document.getElementById("signup");
+      var emailInput = document.getElementById("email");
+      var honeypot = document.getElementById("site");
+      var button = document.getElementById("submit");
+      var status = document.getElementById("status");
+      var loadedAt = Date.now();
+
+      function say(text, type) {
+        status.textContent = text;
+        status.className = "status " + (type || "");
+      }
+
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        var email = emailInput.value.trim().toLowerCase();
+
+        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+          say("Digite um e-mail válido.", "err");
+          emailInput.focus();
+          return;
+        }
+
+        // Robôs: campo escondido preenchido ou envio rápido demais. Finge sucesso e não grava.
+        if (honeypot.value || Date.now() - loadedAt < 1500) {
+          say("Obrigado! Você receberá nossas novidades.", "ok");
+          form.reset();
+          return;
+        }
+
+        button.disabled = true;
+        say("Enviando…");
+
+        fetch(SUPABASE_URL + "/rest/v1/lead", {
+          method: "POST",
+          headers: {
+            "apikey": SUPABASE_ANON_KEY,
+            "Authorization": "Bearer " + SUPABASE_ANON_KEY,
+            "Content-Type": "application/json",
+            "Prefer": "return=minimal"
+          },
+          body: JSON.stringify({ email: email, origem: "em-breve" })
+        }).then(function (res) {
+          // 409 = e-mail já cadastrado: tratamos como sucesso para não revelar quem já está na lista.
+          if (res.ok || res.status === 409) {
+            say("Obrigado! Você receberá nossas novidades.", "ok");
+            form.reset();
+          } else {
+            say("Não foi possível cadastrar agora. Tente novamente em instantes.", "err");
+          }
+        }).catch(function () {
+          say("Sem conexão. Verifique sua internet e tente novamente.", "err");
+        }).then(function () {
+          button.disabled = false;
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

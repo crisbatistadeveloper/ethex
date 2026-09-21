@@ -6,6 +6,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
       "port": 3000
+    },
+    {
+      "name": "em-breve",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--yes", "serve", "landing-em-breve", "-l", "4100"],
+      "port": 4100
     }
   ]
 }
