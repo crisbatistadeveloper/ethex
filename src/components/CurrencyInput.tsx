@@ -12,19 +12,31 @@ function centsToDisplay(cents: number): string {
 export function CurrencyInput({
   name,
   defaultValue,
+  value,
+  onValueChange,
   className,
 }: {
   name: string;
   defaultValue?: number | null;
+  value?: string;
+  onValueChange?: (raw: string) => void;
   className?: string;
 }) {
-  const [cents, setCents] = useState(() =>
+  const [internalCents, setInternalCents] = useState(() =>
     defaultValue ? Math.round(defaultValue * 100) : 0
   );
+  const cents =
+    value !== undefined
+      ? value === ""
+        ? 0
+        : Math.round(Number(value) * 100)
+      : internalCents;
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const digits = e.target.value.replace(/\D/g, "");
-    setCents(digits === "" ? 0 : parseInt(digits, 10));
+    const next = digits === "" ? 0 : parseInt(digits, 10);
+    if (value === undefined) setInternalCents(next);
+    onValueChange?.(next === 0 ? "" : (next / 100).toFixed(2));
   }
 
   const display = cents === 0 ? "" : centsToDisplay(cents);

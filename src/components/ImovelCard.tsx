@@ -65,7 +65,9 @@ export function ImovelCard({
               })}
             </span>
           )}
-          {imovel.caracteristicas?.m2 && <span>{imovel.caracteristicas.m2} m²</span>}
+          {imovel.caracteristicas?.m2 && (
+            <span>{imovel.caracteristicas.m2.toLocaleString("pt-BR")} m²</span>
+          )}
           {imovel.caracteristicas?.quartos && (
             <span>{imovel.caracteristicas.quartos} quartos</span>
           )}

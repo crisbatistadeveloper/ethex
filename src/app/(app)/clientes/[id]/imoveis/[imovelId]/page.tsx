@@ -2,6 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AddressMapPicker } from "@/components/AddressMapPickerLoader";
+import { AreaInput } from "@/components/AreaInput";
+import { CurrencyInput } from "@/components/CurrencyInput";
 import { MediaUploader } from "@/components/MediaUploader";
 import { updateImovel, updateStatusCuradoria } from "../actions";
 import type { CuradoriaStatus, ImovelRow } from "@/lib/database.types";
@@ -90,23 +92,18 @@ export default async function ImovelDetalhePage({
           <h2 className="text-lg font-semibold">Características</h2>
           <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
             <div>
-              <label className={labelClass}>Preço (R$)</label>
-              <input
-                type="number"
+              <label className={labelClass}>Preço</label>
+              <CurrencyInput
                 name="preco"
-                min={0}
-                step="0.01"
-                defaultValue={imovel.preco ?? ""}
+                defaultValue={imovel.preco}
                 className={inputClass}
               />
             </div>
             <div>
-              <label className={labelClass}>m²</label>
-              <input
-                type="number"
+              <label className={labelClass}>Área</label>
+              <AreaInput
                 name="m2"
-                min={0}
-                defaultValue={caracteristicas.m2 ?? ""}
+                defaultValue={caracteristicas.m2}
                 className={inputClass}
               />
             </div>

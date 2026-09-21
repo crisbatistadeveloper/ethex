@@ -2,6 +2,8 @@
 
 import { useState, useTransition } from "react";
 import { fetchLinkPreview } from "@/app/(app)/clientes/[id]/imoveis/actions";
+import { AreaInput } from "@/components/AreaInput";
+import { CurrencyInput } from "@/components/CurrencyInput";
 
 const inputClass =
   "mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-500 focus:outline-none";
@@ -104,25 +106,20 @@ export function AddImovelForm({
         <h2 className="text-lg font-semibold">Características</h2>
         <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
           <div>
-            <label className={labelClass}>Preço (R$)</label>
-            <input
-              type="number"
+            <label className={labelClass}>Preço</label>
+            <CurrencyInput
               name="preco"
-              min={0}
-              step="0.01"
               value={preco}
-              onChange={(e) => setPreco(e.target.value)}
+              onValueChange={setPreco}
               className={inputClass}
             />
           </div>
           <div>
-            <label className={labelClass}>m²</label>
-            <input
-              type="number"
+            <label className={labelClass}>Área</label>
+            <AreaInput
               name="m2"
-              min={0}
               value={m2}
-              onChange={(e) => setM2(e.target.value)}
+              onValueChange={setM2}
               className={inputClass}
             />
           </div>
