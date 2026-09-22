@@ -89,6 +89,12 @@ export function ImovelCard({
           </p>
         )}
 
+        {imovel.comissao_combinada && (
+          <p className="mt-1 text-xs font-medium text-green-700">
+            ✓ Comissão combinada
+          </p>
+        )}
+
         <div className="mt-3 flex gap-2">
           <form action={acao}>
             <input type="hidden" name="status" value="aprovado" />

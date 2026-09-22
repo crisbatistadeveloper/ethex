@@ -17,10 +17,36 @@ export type BuscaStatus = "pendente" | "rodando" | "concluida" | "erro";
 
 export type CuradoriaStatus = "pendente" | "aprovado" | "rejeitado";
 
+export type PapelUsuario = "admin" | "consultor";
+
+export type LeadStatus = "novo" | "atribuido" | "convertido" | "descartado";
+
 export interface RegiaoAceita {
   uf: string;
   cidade: string;
   bairro?: string;
+}
+
+export interface UsuarioRow {
+  id: string;
+  nome: string;
+  papel: PapelUsuario;
+  ativo: boolean;
+  criado_em: string;
+}
+
+export interface LeadRow {
+  id: string;
+  email: string;
+  nome: string | null;
+  telefone: string | null;
+  orcamento_min: number | null;
+  orcamento_max: number | null;
+  origem: string;
+  status: LeadStatus;
+  consultor_id: string | null;
+  cliente_id: string | null;
+  criado_em: string;
 }
 
 export interface ClienteRow {
@@ -30,6 +56,7 @@ export interface ClienteRow {
   email: string | null;
   origem_lead: string | null;
   status: ClienteStatus;
+  consultor_id: string;
   criado_em: string;
   atualizado_em: string;
 }
@@ -95,12 +122,14 @@ export interface ImovelEncontradoRow {
   imovel_id: string;
   score: number | null;
   status_curadoria: CuradoriaStatus;
+  comissao_combinada: boolean;
 }
 
 export interface ImovelComCuradoria extends ImovelRow {
   curadoria_id: string;
   curadoria_score: number | null;
   status_curadoria: CuradoriaStatus;
+  comissao_combinada: boolean;
 }
 
 export type CriterioKey =

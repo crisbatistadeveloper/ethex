@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { getUsuarioAtual } from "@/lib/auth";
 import { signOut } from "./actions";
 
 export default async function AppLayout({
@@ -7,10 +7,7 @@ export default async function AppLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const usuario = await getUsuarioAtual();
 
   return (
     <div className="min-h-screen">
@@ -27,6 +24,12 @@ export default async function AppLayout({
               Clientes
             </Link>
             <Link
+              href="/leads"
+              className="text-sm text-neutral-600 hover:text-neutral-900"
+            >
+              Leads
+            </Link>
+            <Link
               href="/imoveis"
               className="text-sm text-neutral-600 hover:text-neutral-900"
             >
@@ -34,7 +37,16 @@ export default async function AppLayout({
             </Link>
           </div>
           <div className="flex items-center gap-4 text-sm text-neutral-600">
-            {user?.email && <span>{user.email}</span>}
+            {usuario && (
+              <span>
+                {usuario.nome}
+                {usuario.papel === "admin" && (
+                  <span className="ml-1.5 rounded-full border border-neutral-300 px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-neutral-500">
+                    admin
+                  </span>
+                )}
+              </span>
+            )}
             <form action={signOut}>
               <button
                 type="submit"

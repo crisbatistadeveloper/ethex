@@ -256,6 +256,23 @@ export async function updateStatusCuradoria(
   revalidatePath(`/clientes/${clienteId}/imoveis/${curadoriaId}`);
 }
 
+export async function updateComissaoCombinada(
+  curadoriaId: string,
+  clienteId: string,
+  formData: FormData
+) {
+  const comissaoCombinada = formData.get("comissao_combinada") === "on";
+
+  const supabase = await createClient();
+  await supabase
+    .from("imovel_encontrado")
+    .update({ comissao_combinada: comissaoCombinada })
+    .eq("id", curadoriaId);
+
+  revalidatePath(`/clientes/${clienteId}`);
+  revalidatePath(`/clientes/${clienteId}/imoveis/${curadoriaId}`);
+}
+
 export async function addMidiaPropria(
   curadoriaId: string,
   clienteId: string,

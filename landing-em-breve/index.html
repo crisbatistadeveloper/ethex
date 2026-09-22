@@ -81,14 +81,18 @@
     .lead { margin: clamp(20px, 3vw, 32px) 0 0; font-weight: 400; text-transform: uppercase; letter-spacing: 0.22em; line-height: 1.7; font-size: clamp(1rem, 2.4vw, 1.55rem); }
     .lead-text { margin: clamp(20px, 3vw, 32px) 0 0; max-width: 430px; line-height: 1.8; letter-spacing: 0.06em; font-weight: 300; font-size: clamp(0.92rem, 1.7vw, 1.08rem); color: var(--muted); }
 
-    .signup { display: flex; margin-top: clamp(28px, 4vw, 44px); max-width: 480px; border: 1px solid rgba(255, 255, 255, 0.4); background: rgba(5, 15, 27, 0.55); backdrop-filter: blur(4px); }
-    .signup:focus-within { border-color: var(--gold); }
-    .signup-icon { display: grid; place-items: center; width: 58px; flex: none; border-right: 1px solid rgba(255, 255, 255, 0.4); }
-    .signup input[type="email"] { flex: 1; min-width: 0; padding: 0 16px; height: 62px; background: transparent; border: 0; outline: 0; color: var(--white); font: inherit; font-size: 0.95rem; letter-spacing: 0.04em; }
+    .signup { display: flex; flex-direction: column; margin-top: clamp(28px, 4vw, 44px); max-width: 480px; border: 1px solid rgba(255, 255, 255, 0.4); background: rgba(5, 15, 27, 0.55); backdrop-filter: blur(4px); }
+    .signup-row { display: flex; align-items: stretch; border-bottom: 1px solid rgba(255, 255, 255, 0.18); }
+    .signup-row:last-of-type { border-bottom: 0; }
+    .signup-row:focus-within { border-color: var(--gold); }
+    .signup-icon { display: grid; place-items: center; width: 52px; flex: none; border-right: 1px solid rgba(255, 255, 255, 0.4); color: rgba(255, 255, 255, 0.75); }
+    .signup input, .signup select { flex: 1; min-width: 0; padding: 0 14px; height: clamp(46px, 6.4vh, 54px); background: transparent; border: 0; outline: 0; color: var(--white); font: inherit; font-size: 0.9rem; letter-spacing: 0.02em; }
     .signup input::placeholder { color: rgba(255, 255, 255, 0.6); }
-    .signup button { width: 68px; flex: none; border: 0; cursor: pointer; background: var(--gold); color: var(--navy-900); display: grid; place-items: center; transition: filter 0.15s; }
-    .signup button:hover:not(:disabled) { filter: brightness(1.08); }
-    .signup button:disabled { cursor: progress; opacity: 0.7; }
+    .signup select { appearance: none; -webkit-appearance: none; color: rgba(255, 255, 255, 0.85); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d6b072' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 34px; }
+    .signup select option { color: #111; }
+    .signup-submit { display: flex; align-items: center; justify-content: center; gap: 10px; height: clamp(48px, 6.6vh, 56px); border: 0; cursor: pointer; background: var(--gold); color: var(--navy-900); font: inherit; font-weight: 600; font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase; transition: filter 0.15s; }
+    .signup-submit:hover:not(:disabled) { filter: brightness(1.08); }
+    .signup-submit:disabled { cursor: progress; opacity: 0.7; }
     .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
 
     .secure { display: flex; align-items: center; gap: 12px; margin: 18px 0 0; font-size: 0.85rem; letter-spacing: 0.04em; color: var(--muted); }
@@ -162,9 +166,7 @@
 
     @media (max-width: 560px) {
       .nav { display: none; }
-      .signup input[type="email"] { height: 56px; }
-      .signup-icon { width: 50px; }
-      .signup button { width: 60px; }
+      .signup-icon { width: 46px; }
       .footer-inner { flex-direction: column; align-items: flex-start; }
       .footer-right { align-items: flex-start; }
       .footer-motto { text-align: left; }
@@ -196,13 +198,40 @@
           <p class="lead-text">Tecnologia, análise de dados e consultoria especializada para compradores que buscam mais clareza, segurança e melhores decisões.</p>
 
           <form class="signup" id="signup" novalidate>
-            <span class="signup-icon" aria-hidden="true">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="m3.5 6.5 8.5 7 8.5-7"/></svg>
-            </span>
-            <input type="email" id="email" name="email" placeholder="Receba as novidades" autocomplete="email" inputmode="email" maxlength="254" aria-label="Seu e-mail" required>
+            <div class="signup-row">
+              <span class="signup-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>
+              </span>
+              <input type="text" id="nome" name="nome" placeholder="Seu nome" autocomplete="name" maxlength="120" aria-label="Seu nome" required>
+            </div>
+            <div class="signup-row">
+              <span class="signup-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 3h3l1.5 4-2 1.5a12 12 0 0 0 6.5 6.5l1.5-2 4 1.5v3c0 1.1-.9 2-2 2C11.6 19.5 4.5 12.4 4.5 5c0-1.1.9-2 2-2Z"/></svg>
+              </span>
+              <input type="tel" id="telefone" name="telefone" placeholder="WhatsApp" autocomplete="tel" inputmode="tel" maxlength="20" aria-label="Seu WhatsApp" required>
+            </div>
+            <div class="signup-row">
+              <span class="signup-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="m3.5 6.5 8.5 7 8.5-7"/></svg>
+              </span>
+              <input type="email" id="email" name="email" placeholder="Seu e-mail" autocomplete="email" inputmode="email" maxlength="254" aria-label="Seu e-mail" required>
+            </div>
+            <div class="signup-row">
+              <span class="signup-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M8 7.5h5a2.5 2.5 0 0 1 0 5H9a2.5 2.5 0 0 0 0 5h6"/></svg>
+              </span>
+              <select id="orcamento" name="orcamento" aria-label="Faixa de orçamento">
+                <option value="">Faixa de orçamento (opcional)</option>
+                <option value="0-500000">Até R$ 500 mil</option>
+                <option value="500000-1000000">R$ 500 mil – R$ 1 milhão</option>
+                <option value="1000000-2000000">R$ 1 – 2 milhões</option>
+                <option value="2000000-">Acima de R$ 2 milhões</option>
+              </select>
+            </div>
             <input class="hp" type="text" id="site" name="site" tabindex="-1" autocomplete="off" aria-hidden="true">
-            <button type="submit" id="submit" aria-label="Cadastrar e-mail">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16m-6-6 6 6-6 6"/></svg>
+            <button type="submit" class="signup-submit" id="submit">
+              Quero receber novidades
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16m-6-6 6 6-6 6"/></svg>
             </button>
           </form>
           <p class="status" id="status" role="status" aria-live="polite"></p>
@@ -210,7 +239,7 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
             Seus dados estão seguros.
           </p>
-          <p class="consent">Ao se cadastrar, você concorda em receber novidades da Ethex por e-mail e pode cancelar quando quiser.</p>
+          <p class="consent">Ao se cadastrar, você concorda em ser contatado pela Ethex por e-mail ou WhatsApp e pode cancelar quando quiser.</p>
         </div>
 
         <aside class="quote" aria-hidden="true">Bons negócios começam com as perguntas certas.</aside>
@@ -274,7 +303,10 @@
       var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRwZml1Z3F2b3pvdW95ZmNzamJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk3MjA1ODcsImV4cCI6MjEwNTI5NjU4N30.20R6MLkcu3INod2HlPCuxfFCUZejUOWMxLI2S_1aAWg";
 
       var form = document.getElementById("signup");
+      var nomeInput = document.getElementById("nome");
+      var telefoneInput = document.getElementById("telefone");
       var emailInput = document.getElementById("email");
+      var orcamentoSelect = document.getElementById("orcamento");
       var honeypot = document.getElementById("site");
       var button = document.getElementById("submit");
       var status = document.getElementById("status");
@@ -285,10 +317,31 @@
         status.className = "status " + (type || "");
       }
 
+      // "0-500000" -> [0, 500000]; "2000000-" -> [2000000, null]; "" -> [null, null]
+      function parseFaixa(valor) {
+        if (!valor) return [null, null];
+        var partes = valor.split("-");
+        var min = partes[0] === "" ? null : Number(partes[0]);
+        var max = partes[1] === "" || partes[1] === undefined ? null : Number(partes[1]);
+        return [min, max];
+      }
+
       form.addEventListener("submit", function (event) {
         event.preventDefault();
+        var nome = nomeInput.value.trim();
+        var telefone = telefoneInput.value.trim();
         var email = emailInput.value.trim().toLowerCase();
 
+        if (!nome) {
+          say("Digite seu nome.", "err");
+          nomeInput.focus();
+          return;
+        }
+        if (!telefone) {
+          say("Digite seu WhatsApp.", "err");
+          telefoneInput.focus();
+          return;
+        }
         if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
           say("Digite um e-mail válido.", "err");
           emailInput.focus();
@@ -297,13 +350,15 @@
 
         // Robôs: campo escondido preenchido ou envio rápido demais. Finge sucesso e não grava.
         if (honeypot.value || Date.now() - loadedAt < 1500) {
-          say("Obrigado! Você receberá nossas novidades.", "ok");
+          say("Obrigado! Em breve entraremos em contato.", "ok");
           form.reset();
           return;
         }
 
         button.disabled = true;
         say("Enviando…");
+
+        var faixa = parseFaixa(orcamentoSelect.value);
 
         fetch(SUPABASE_URL + "/rest/v1/lead", {
           method: "POST",
@@ -313,11 +368,18 @@
             "Content-Type": "application/json",
             "Prefer": "return=minimal"
           },
-          body: JSON.stringify({ email: email, origem: "em-breve" })
+          body: JSON.stringify({
+            email: email,
+            nome: nome,
+            telefone: telefone,
+            orcamento_min: faixa[0],
+            orcamento_max: faixa[1],
+            origem: "em-breve"
+          })
         }).then(function (res) {
           // 409 = e-mail já cadastrado: tratamos como sucesso para não revelar quem já está na lista.
           if (res.ok || res.status === 409) {
-            say("Obrigado! Você receberá nossas novidades.", "ok");
+            say("Obrigado! Em breve entraremos em contato.", "ok");
             form.reset();
           } else {
             say("Não foi possível cadastrar agora. Tente novamente em instantes.", "err");

@@ -5,7 +5,11 @@ import { AddressMapPicker } from "@/components/AddressMapPickerLoader";
 import { AreaInput } from "@/components/AreaInput";
 import { CurrencyInput } from "@/components/CurrencyInput";
 import { MediaUploader } from "@/components/MediaUploader";
-import { updateImovel, updateStatusCuradoria } from "../actions";
+import {
+  updateComissaoCombinada,
+  updateImovel,
+  updateStatusCuradoria,
+} from "../actions";
 import type { CuradoriaStatus, ImovelRow } from "@/lib/database.types";
 
 const inputClass =
@@ -15,6 +19,7 @@ const labelClass = "block text-sm font-medium text-neutral-700";
 interface CuradoriaComImovel {
   id: string;
   status_curadoria: CuradoriaStatus;
+  comissao_combinada: boolean;
   imovel: ImovelRow;
 }
 
@@ -28,7 +33,7 @@ export default async function ImovelDetalhePage({
 
   const { data: curadoria } = await supabase
     .from("imovel_encontrado")
-    .select("id, status_curadoria, imovel(*)")
+    .select("id, status_curadoria, comissao_combinada, imovel(*)")
     .eq("id", imovelId)
     .returns<CuradoriaComImovel[]>()
     .maybeSingle();
@@ -38,6 +43,7 @@ export default async function ImovelDetalhePage({
   const imovel = curadoria.imovel;
   const updateAction = updateImovel.bind(null, imovelId, id);
   const statusAction = updateStatusCuradoria.bind(null, imovelId, id);
+  const comissaoAction = updateComissaoCombinada.bind(null, imovelId, id);
   const caracteristicas = imovel.caracteristicas ?? {};
 
   return (
@@ -80,6 +86,27 @@ export default async function ImovelDetalhePage({
           </button>
         </form>
       </div>
+
+      <form
+        action={comissaoAction}
+        className="mt-4 flex items-center gap-2 text-sm text-neutral-700"
+      >
+        <input
+          type="checkbox"
+          id="comissao_combinada"
+          name="comissao_combinada"
+          defaultChecked={curadoria.comissao_combinada}
+        />
+        <label htmlFor="comissao_combinada">
+          Divisão de comissão combinada com o corretor/imobiliária
+        </label>
+        <button
+          type="submit"
+          className="ml-1 rounded-md border border-neutral-300 px-2.5 py-1 text-xs hover:bg-neutral-100"
+        >
+          Salvar
+        </button>
+      </form>
 
       <p className="mt-4 text-xs text-neutral-500">
         Este imóvel fica salvo no catálogo compartilhado — editar os campos

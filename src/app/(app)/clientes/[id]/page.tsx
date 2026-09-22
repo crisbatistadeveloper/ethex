@@ -6,6 +6,7 @@ import {
   FINALIDADE_LABELS,
   STATUS_COLORS,
   STATUS_LABELS,
+  formatFaixaValores,
   formatRegiao,
 } from "@/lib/labels";
 import { labelCriterio } from "@/lib/scoring-criteria";
@@ -22,6 +23,7 @@ interface CuradoriaComImovel {
   id: string;
   score: number | null;
   status_curadoria: ImovelComCuradoria["status_curadoria"];
+  comissao_combinada: boolean;
   imovel: ImovelRow;
 }
 
@@ -59,7 +61,7 @@ export default async function ClienteDetalhePage({
     if (buscaIds.length > 0) {
       const { data } = await supabase
         .from("imovel_encontrado")
-        .select("id, score, status_curadoria, imovel(*)")
+        .select("id, score, status_curadoria, comissao_combinada, imovel(*)")
         .in("busca_id", buscaIds)
         .order("id", { ascending: false })
         .returns<CuradoriaComImovel[]>();
@@ -68,6 +70,7 @@ export default async function ClienteDetalhePage({
         curadoria_id: c.id,
         curadoria_score: c.score,
         status_curadoria: c.status_curadoria,
+        comissao_combinada: c.comissao_combinada,
       }));
     }
   }
@@ -123,7 +126,7 @@ export default async function ClienteDetalhePage({
             <Field label="Finalidade" value={FINALIDADE_LABELS[perfil.finalidade]} />
             <Field
               label="Orçamento"
-              value={formatFaixa(perfil.orcamento_min, perfil.orcamento_max)}
+              value={formatFaixaValores(perfil.orcamento_min, perfil.orcamento_max)}
             />
             <Field label="Tipo de imóvel" value={perfil.tipo_imovel} />
             <Field label="Quartos (mín.)" value={perfil.quartos_min} />
@@ -245,13 +248,4 @@ function Field({
 function formatBool(value: boolean | null): string {
   if (value === null) return "—";
   return value ? "Sim" : "Não";
-}
-
-function formatFaixa(min: number | null, max: number | null): string {
-  const fmt = (n: number) =>
-    n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-  if (min === null && max === null) return "—";
-  if (min !== null && max !== null) return `${fmt(min)} – ${fmt(max)}`;
-  if (min !== null) return `a partir de ${fmt(min)}`;
-  return `até ${fmt(max as number)}`;
 }

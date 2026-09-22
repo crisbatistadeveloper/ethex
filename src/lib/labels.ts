@@ -28,3 +28,15 @@ export function formatRegiao(regiao: RegiaoAceita): string {
   const local = [regiao.bairro, regiao.cidade].filter(Boolean).join(", ");
   return `${local} - ${regiao.uf}`;
 }
+
+export function formatFaixaValores(
+  min: number | null,
+  max: number | null
+): string {
+  const fmt = (n: number) =>
+    n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  if (min === null && max === null) return "—";
+  if (min !== null && max !== null) return `${fmt(min)} – ${fmt(max)}`;
+  if (min !== null) return `a partir de ${fmt(min)}`;
+  return `até ${fmt(max as number)}`;
+}

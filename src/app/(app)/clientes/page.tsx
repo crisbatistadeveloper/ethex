@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { getUsuarioAtual } from "@/lib/auth";
 import { FINALIDADE_LABELS, STATUS_COLORS, STATUS_LABELS } from "@/lib/labels";
 import type { ClienteStatus, Finalidade } from "@/lib/database.types";
 
@@ -12,6 +13,7 @@ interface ClienteListItem {
 }
 
 export default async function ClientesPage() {
+  const usuario = await getUsuarioAtual();
   const supabase = await createClient();
   const { data: clientes, error } = await supabase
     .from("cliente")
@@ -22,7 +24,9 @@ export default async function ClientesPage() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Clientes</h1>
+        <h1 className="text-2xl font-semibold">
+          {usuario?.papel === "admin" ? "Todos os clientes" : "Meus clientes"}
+        </h1>
         <Link
           href="/clientes/novo"
           className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-800"

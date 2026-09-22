@@ -28,6 +28,12 @@ export async function createCliente(formData: FormData) {
   }
 
   const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) redirect("/login");
+
   const { data, error } = await supabase
     .from("cliente")
     .insert({
@@ -35,6 +41,7 @@ export async function createCliente(formData: FormData) {
       telefone: parsed.data.telefone,
       email: parsed.data.email,
       origem_lead: parsed.data.origem_lead,
+      consultor_id: user.id,
     })
     .select("id")
     .single();
