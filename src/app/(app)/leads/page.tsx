@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getUsuarioAtual } from "@/lib/auth";
-import { formatFaixaValores } from "@/lib/labels";
+import { FINALIDADE_LABELS, formatFaixaValores } from "@/lib/labels";
 import { assignLead, convertLead, descartarLead } from "./actions";
 import type { LeadRow } from "@/lib/database.types";
 
@@ -87,6 +87,7 @@ export default async function LeadsPage({
             </div>
 
             <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-neutral-600">
+              {lead.finalidade && <span>{FINALIDADE_LABELS[lead.finalidade]}</span>}
               <span>{formatFaixaValores(lead.orcamento_min, lead.orcamento_max)}</span>
               <span>Origem: {lead.origem}</span>
               {lead.usuario && <span>Consultor: {lead.usuario.nome}</span>}

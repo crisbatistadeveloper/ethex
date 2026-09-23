@@ -12,6 +12,12 @@
       "runtimeExecutable": "npx",
       "runtimeArgs": ["--yes", "serve", "landing-em-breve", "-l", "4100"],
       "port": 4100
+    },
+    {
+      "name": "landing-principal",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--yes", "serve", "landing-principal", "-l", "4200"],
+      "port": 4200
     }
   ]
 }

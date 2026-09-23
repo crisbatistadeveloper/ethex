@@ -34,7 +34,7 @@ export async function convertLead(leadId: string) {
 
   const { data: lead } = await supabase
     .from("lead")
-    .select("nome, email, telefone")
+    .select("nome, email, telefone, finalidade, orcamento_min, orcamento_max")
     .eq("id", leadId)
     .maybeSingle();
 
@@ -45,7 +45,7 @@ export async function convertLead(leadId: string) {
   const { data: cliente, error } = await supabase
     .from("cliente")
     .insert({
-      nome: lead.nome ?? lead.email,
+      nome: lead.nome ?? lead.email ?? "Lead sem nome",
       email: lead.email,
       telefone: lead.telefone,
       origem_lead: "landing",
@@ -58,6 +58,16 @@ export async function convertLead(leadId: string) {
     redirect(
       `/leads?error=${encodeURIComponent(error?.message ?? "Erro ao converter lead")}`
     );
+  }
+
+  // A landing já pergunta motivo/orçamento — evita perguntar de novo na entrevista.
+  if (lead.finalidade) {
+    await supabase.from("perfil").insert({
+      cliente_id: cliente.id,
+      finalidade: lead.finalidade,
+      orcamento_min: lead.orcamento_min,
+      orcamento_max: lead.orcamento_max,
+    });
   }
 
   await supabase

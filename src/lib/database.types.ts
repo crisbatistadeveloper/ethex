@@ -37,15 +37,17 @@ export interface UsuarioRow {
 
 export interface LeadRow {
   id: string;
-  email: string;
+  email: string | null;
   nome: string | null;
   telefone: string | null;
+  finalidade: Finalidade | null;
   orcamento_min: number | null;
   orcamento_max: number | null;
   origem: string;
   status: LeadStatus;
   consultor_id: string | null;
   cliente_id: string | null;
+  consentimento_lgpd: boolean;
   criado_em: string;
 }
 

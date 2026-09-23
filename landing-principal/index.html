@@ -1,0 +1,747 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ethex — Representação exclusiva do comprador de imóveis</title>
+  <meta name="description" content="Consultoria de representação exclusiva do comprador (buyer's agent). Sem vínculo com vendedores, sem custo adicional para você.">
+  <meta name="theme-color" content="#071626">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy-950: #050f1b;
+      --navy-900: #071626;
+      --navy-800: #0b1f34;
+      --gold: #d6b072;
+      --gold-dark: #b8925a;
+      --white: #ffffff;
+      --muted: rgba(255, 255, 255, 0.9);
+      --line: rgba(255, 255, 255, 0.16);
+      --gutter: clamp(20px, 6vw, 88px);
+      --paper: #faf8f5;
+      --ink: #0b1f34;
+      --ink-muted: #3c4451;
+      --ink-line: #e4e0d9;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      font-weight: 400;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container { width: 100%; max-width: 1180px; margin-inline: auto; padding-inline: var(--gutter); }
+    .container.narrow { max-width: 880px; }
+
+    a { color: inherit; }
+
+    /* ---------- hero (azul da marca) ---------- */
+    .hero-page { position: relative; min-height: 100svh; overflow: hidden; isolation: isolate; background: var(--navy-900); color: var(--white); }
+    .hero-stage { position: relative; isolation: isolate; min-height: 100svh; display: flex; flex-direction: column; }
+    .hero-stage::before,
+    .hero-stage::after { content: ""; position: absolute; inset: 0; pointer-events: none; }
+    .hero-stage::before {
+      z-index: -2;
+      left: auto;
+      width: min(82%, 1145px);
+      background:
+        url("assets/hero.webp") 45% 42% / cover no-repeat,
+        radial-gradient(90% 70% at 70% 35%, #16324f 0%, rgba(11, 31, 52, 0) 60%);
+      -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.5) 22%, #000 60%);
+      mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.5) 22%, #000 60%);
+    }
+    .hero-stage::after {
+      z-index: -1;
+      background:
+        linear-gradient(90deg, rgba(7, 22, 38, 0.96) 0%, rgba(7, 22, 38, 0.82) 45%, rgba(7, 22, 38, 0.5) 72%, rgba(7, 22, 38, 0.15) 92%, rgba(7, 22, 38, 0) 100%),
+        linear-gradient(180deg, rgba(7, 22, 38, 0.55) 0%, rgba(7, 22, 38, 0) 20%, rgba(7, 22, 38, 0) 72%, var(--navy-900) 100%);
+    }
+
+    .topbar { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; padding-top: clamp(24px, 4vw, 48px); }
+    .brand { display: block; line-height: 0; }
+    .brand img { display: block; width: clamp(190px, 30vw, 300px); height: auto; }
+    .nav { display: flex; gap: clamp(16px, 3vw, 36px); padding-top: 10px; font-size: 0.7rem; letter-spacing: 0.18em; font-weight: 500; }
+    .nav a { color: var(--muted); text-decoration: none; padding-bottom: 8px; }
+    .nav a:hover { color: var(--white); }
+
+    .hero { flex: 1; display: flex; align-items: center; padding-block: clamp(40px, 8vw, 88px); }
+    .hero-copy { max-width: 620px; }
+    .rule { width: 56px; height: 3px; background: var(--gold); margin-bottom: clamp(18px, 3vw, 28px); }
+    .rule-dark { background: var(--gold); }
+    h1 { margin: 0; font-weight: 800; line-height: 1.05; font-size: clamp(2.3rem, 5.4vw, 3.6rem); letter-spacing: -0.01em; }
+    h1 .gold { color: var(--gold); }
+    .hero-sub { margin: clamp(18px, 3vw, 26px) 0 0; max-width: 520px; line-height: 1.75; letter-spacing: 0.02em; font-weight: 400; font-size: clamp(0.95rem, 1.6vw, 1.08rem); color: rgba(255, 255, 255, 0.92); }
+
+    .cta-primary { display: inline-flex; align-items: center; gap: 10px; margin-top: clamp(26px, 4vw, 36px); padding: 17px 30px; background: var(--gold); color: var(--navy-900); text-decoration: none; font-weight: 600; font-size: 0.86rem; letter-spacing: 0.06em; border: 0; cursor: pointer; transition: filter 0.15s; }
+    .cta-primary:hover { filter: brightness(1.08); }
+    .cta-primary svg { width: 18px; height: 18px; flex: none; }
+    .cta-note { margin: 14px 0 0; font-size: 0.8rem; letter-spacing: 0.02em; color: rgba(255, 255, 255, 0.62); max-width: 420px; line-height: 1.6; }
+
+    .scroll-hint { display: none; align-self: center; padding-bottom: 28px; color: rgba(255, 255, 255, 0.55); }
+
+    /* ---------- seções de conteúdo (papel claro) ---------- */
+    .section { padding-block: clamp(56px, 9vw, 108px); }
+    .section-tint { background: #f2ece2; }
+    .section-dark { background: var(--navy-900); color: var(--white); }
+
+    .eyebrow { display: block; font-size: 0.72rem; letter-spacing: 0.24em; font-weight: 600; text-transform: uppercase; color: var(--gold-dark); margin-bottom: 14px; }
+    .section-dark .eyebrow { color: var(--gold); }
+
+    h2 { margin: 0; font-weight: 800; line-height: 1.18; font-size: clamp(1.7rem, 3.4vw, 2.5rem); letter-spacing: -0.01em; max-width: 760px; }
+    .section-body { margin: clamp(20px, 3vw, 28px) 0 0; max-width: 640px; font-size: clamp(1.05rem, 1.7vw, 1.18rem); line-height: 1.8; font-weight: 500; color: var(--ink-muted); }
+    .section-dark .section-body { color: var(--muted); }
+
+    .bullets { list-style: none; margin: clamp(28px, 4vw, 40px) 0 0; padding: 0; display: grid; gap: 18px; max-width: 760px; }
+    .bullets li { position: relative; padding-left: 30px; font-size: 1.02rem; line-height: 1.65; color: var(--ink); font-weight: 500; max-width: 620px; }
+    .bullets li::before { content: ""; position: absolute; left: 0; top: 8px; width: 9px; height: 9px; background: var(--gold); }
+
+    .stat-row { display: flex; flex-wrap: wrap; gap: clamp(24px, 5vw, 64px); margin: clamp(32px, 5vw, 48px) 0; }
+    .stat { min-width: 160px; }
+    .stat .num { display: block; font-weight: 800; font-size: clamp(2.2rem, 5vw, 3.2rem); color: var(--ink); line-height: 1; }
+    .stat .num.gold-num { color: var(--gold-dark); }
+    .stat .label { display: block; margin-top: 8px; font-size: 0.82rem; letter-spacing: 0.02em; color: var(--ink-muted); max-width: 220px; line-height: 1.5; }
+
+    /* ---------- como funciona ---------- */
+    .steps { position: relative; margin: clamp(36px, 5vw, 52px) 0 0; display: grid; gap: 0; max-width: 780px; }
+    .steps-track { position: absolute; left: 21px; width: 2px; background: var(--ink-line); z-index: 0; }
+    .steps-track-fill { position: absolute; left: 0; top: 0; width: 100%; height: 0%; background: var(--gold); transition: height 0.7s cubic-bezier(.16,.8,.24,1); }
+    .step { position: relative; z-index: 1; display: flex; gap: 22px; padding-block: 26px; }
+    .step-num { flex: none; width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--gold); background: var(--paper); color: var(--gold-dark); display: grid; place-items: center; font-weight: 700; font-size: 0.95rem; transition: background 0.4s ease, color 0.4s ease; }
+    .step-num.is-lit { background: var(--gold); border-color: var(--gold); color: var(--navy-900); }
+    .step-copy h3 { margin: 0 0 8px; font-size: 1.02rem; font-weight: 600; letter-spacing: 0.01em; }
+    .step-copy p { margin: 0; font-size: 1rem; line-height: 1.7; color: var(--ink-muted); font-weight: 500; max-width: 560px; }
+
+    /* ---------- diferenciais (grid escuro) ---------- */
+    .diff-grid { margin: clamp(36px, 5vw, 52px) 0 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+    .diff-card { background: var(--navy-900); padding: clamp(24px, 3vw, 34px) clamp(20px, 3vw, 28px); }
+    .diff-icon { display: block; margin-bottom: 16px; }
+    .diff-icon svg { width: 32px; height: 32px; stroke: var(--gold); fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+    .diff-card h3 { margin: 0 0 10px; font-size: 0.98rem; font-weight: 600; letter-spacing: 0.01em; }
+    .diff-card p { margin: 0; font-size: 0.95rem; line-height: 1.7; color: rgba(255, 255, 255, 0.9); font-weight: 500; }
+
+    /* ---------- formulário ---------- */
+    .form-card { margin-top: clamp(32px, 4vw, 44px); background: var(--white); border: 1px solid var(--ink-line); padding: clamp(24px, 4vw, 44px); }
+    .field { margin-bottom: 20px; }
+    .field label,
+    .fieldset legend { display: block; font-size: 0.82rem; font-weight: 600; letter-spacing: 0.02em; color: var(--ink); margin-bottom: 9px; }
+    .field input[type="text"],
+    .field input[type="tel"] { width: 100%; padding: 13px 14px; border: 1px solid var(--ink-line); background: var(--paper); font: inherit; font-size: 0.92rem; color: var(--ink); outline: 0; }
+    .field input:focus { border-color: var(--gold-dark); }
+    .fieldset { border: 0; padding: 0; margin: 0 0 20px; }
+    .pill-group { display: flex; flex-wrap: wrap; gap: 10px; }
+    .pill-group input[type="radio"] { position: absolute; opacity: 0; pointer-events: none; }
+    .pill-group label { margin: 0; display: inline-flex; align-items: center; padding: 10px 16px; border: 1px solid var(--ink-line); background: var(--paper); font-size: 0.85rem; font-weight: 500; color: var(--ink-muted); cursor: pointer; transition: border-color 0.15s, color 0.15s, background 0.15s; }
+    .pill-group input[type="radio"]:checked + label { border-color: var(--gold-dark); background: #f6ecd9; color: var(--ink); }
+    .pill-group input[type="radio"]:focus-visible + label { outline: 2px solid var(--gold-dark); outline-offset: 2px; }
+
+    .consent { display: flex; align-items: flex-start; gap: 10px; margin: 22px 0 0; }
+    .consent input { margin-top: 3px; flex: none; }
+    .consent label { font-size: 0.78rem; line-height: 1.6; color: var(--ink-muted); font-weight: 400; }
+    .consent a { color: var(--ink); text-decoration: underline; }
+
+    .submit-btn { display: inline-flex; align-items: center; gap: 10px; margin-top: 22px; padding: 16px 32px; background: var(--gold); color: var(--navy-900); border: 0; font: inherit; font-weight: 600; font-size: 0.86rem; letter-spacing: 0.05em; cursor: pointer; transition: filter 0.15s, opacity 0.15s; }
+    .submit-btn:hover:not(:disabled) { filter: brightness(1.06); }
+    .submit-btn:disabled { cursor: progress; opacity: 0.65; }
+    .submit-note { margin: 14px 0 0; font-size: 0.78rem; color: var(--ink-muted); max-width: 420px; line-height: 1.6; }
+    .form-status { min-height: 1.4em; margin: 16px 0 0; font-size: 0.88rem; font-weight: 500; }
+    .form-status.ok { color: #2f6b45; }
+    .form-status.err { color: #b13a2f; }
+    .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+
+    /* ---------- rodapé ---------- */
+    .footer-main { background: var(--navy-950); color: var(--white); padding-block: clamp(56px, 8vw, 88px) clamp(32px, 4vw, 44px); }
+    .footer-main h2 { color: var(--white); }
+    .footer-main .section-body { color: var(--muted); }
+    .footer-cta { display: inline-block; margin-top: 22px; font-size: 0.86rem; font-weight: 600; color: var(--gold); text-decoration: none; border-bottom: 1px solid var(--gold); padding-bottom: 3px; }
+    .footer-grid { margin-top: clamp(40px, 6vw, 64px); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 32px; border-top: 1px solid var(--line); padding-top: clamp(28px, 4vw, 40px); }
+    .footer-contact { font-size: 0.86rem; line-height: 2; color: var(--muted); }
+    .footer-contact strong { color: var(--white); font-weight: 600; }
+    .footer-links { display: flex; flex-direction: column; gap: 10px; font-size: 0.82rem; }
+    .footer-links a { color: var(--muted); text-decoration: none; }
+    .footer-links a:hover { color: var(--white); }
+    .footer-bottom { margin-top: clamp(28px, 4vw, 40px); padding-top: 20px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; }
+    .footer-brand-mark img { width: clamp(44px, 5vw, 56px); height: auto; display: block; }
+    .footer-copy { font-size: 0.68rem; letter-spacing: 0.08em; color: rgba(255, 255, 255, 0.5); }
+    .placeholder-note { color: var(--gold); }
+
+    /* ---------- responsivo ---------- */
+    @media (max-width: 899px) {
+      .hero-stage::before { width: 100%; background-position: 80% 30%, 0 0; -webkit-mask-image: none; mask-image: none; }
+      .hero-stage::after {
+        background:
+          linear-gradient(90deg, rgba(7, 22, 38, 0.95) 0%, rgba(7, 22, 38, 0.88) 55%, rgba(7, 22, 38, 0.68) 100%),
+          linear-gradient(180deg, rgba(7, 22, 38, 0.35) 0%, rgba(7, 22, 38, 0.2) 16%, rgba(7, 22, 38, 0.2) 62%, var(--navy-900) 100%);
+      }
+      .diff-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .nav { display: none; }
+      .diff-grid { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; }
+    }
+
+    /* ---------- comportamento / scroll ---------- */
+    .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.7s cubic-bezier(.16,.8,.24,1), transform 0.7s cubic-bezier(.16,.8,.24,1); transition-delay: calc(var(--i, 0) * 90ms); }
+    .reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+    .nav a { position: relative; transition: color 0.15s; }
+    .nav a.is-active { color: var(--white); }
+    .nav a.is-active::after { content: ""; position: absolute; left: 0; right: 0; bottom: -8px; height: 2px; background: var(--gold); }
+
+    .sticky-bar { position: fixed; left: 0; right: 0; top: 0; z-index: 40; background: rgba(5, 15, 27, 0.94); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); transform: translateY(-100%); transition: transform 0.35s ease; }
+    .sticky-bar.is-visible { transform: translateY(0); }
+    .sticky-bar-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 12px; }
+    .sticky-bar-text { font-size: 0.82rem; color: var(--white); font-weight: 500; }
+    .sticky-bar-btn { flex: none; display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: var(--gold); color: var(--navy-900); text-decoration: none; font-weight: 600; font-size: 0.78rem; letter-spacing: 0.04em; white-space: nowrap; transition: filter 0.15s; }
+    .sticky-bar-btn:hover { filter: brightness(1.06); }
+
+    .num[data-count] { font-variant-numeric: tabular-nums; }
+
+    @media (max-width: 640px) {
+      .sticky-bar-text { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .reveal { transition: none; opacity: 1; transform: none; }
+      .sticky-bar { transition: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sticky-bar" id="stickyBar">
+    <div class="container sticky-bar-inner">
+      <span class="sticky-bar-text">Pronto para ter representação exclusiva na sua compra?</span>
+      <a href="#formulario" class="sticky-bar-btn">Solicitar entrevista →</a>
+    </div>
+  </div>
+
+  <div class="hero-page">
+    <div class="hero-stage">
+      <div class="container">
+        <header class="topbar">
+          <a class="brand" href="./">
+            <img src="assets/logo.png" width="460" height="151" alt="Ethex — Inteligência ao seu lado. Exclusivamente para compradores">
+          </a>
+          <nav class="nav">
+            <a href="#dor">O problema</a>
+            <a href="#solucao">O modelo</a>
+            <a href="#como-funciona">Como funciona</a>
+            <a href="#formulario">Fale conosco</a>
+          </nav>
+        </header>
+
+        <main class="hero">
+          <div class="hero-copy">
+            <div class="rule"></div>
+            <h1>O caminho mais seguro para <span class="gold">adquirir o imóvel certo</span> para você</h1>
+            <p class="hero-sub">Somos uma consultoria de representação exclusiva do comprador (buyer's agent) — não atuamos na captação de imóveis, sem vínculo com vendedores, sem custo adicional para você.</p>
+            <a href="#formulario" class="cta-primary">
+              Solicitar entrevista de qualificação
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16m-6-6 6 6-6 6"/></svg>
+            </a>
+            <p class="cta-note">Sem custo adicional para o comprador. Remuneração vinculada exclusivamente ao fechamento.</p>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <!-- Seção 2 — a dor -->
+  <section class="section" id="dor">
+    <div class="container narrow">
+      <span class="eyebrow">O problema</span>
+      <h2 class="reveal">Quem representa seus interesses na negociação?</h2>
+      <p class="section-body reveal">No modelo tradicional de intermediação imobiliária, o corretor que conduz sua visita e sua negociação recebe comissão vinculada ao valor de fechamento — o que naturalmente alinha seus interesses aos do vendedor, não aos seus.</p>
+      <p class="section-body reveal">Além disso, o corretor tradicional apresenta prioritariamente os imóveis que já tem em sua própria captação — seu compromisso está com o estoque disponível, não necessariamente com o imóvel que melhor atende ao seu objetivo. O comprador, nesse arranjo, tem acesso a um recorte limitado do mercado, e conduz sozinho a etapa mais técnica e financeiramente relevante da negociação — sem representação dedicada aos seus próprios interesses.</p>
+      <ul class="bullets">
+        <li class="reveal">A remuneração do corretor tradicional está vinculada ao valor de venda, não à adequação do imóvel ao comprador.</li>
+        <li class="reveal">A oferta apresentada normalmente se limita à captação própria do corretor ou da imobiliária — não ao mercado como um todo.</li>
+        <li class="reveal">A análise técnica e jurídica do imóvel, quando existe, geralmente é conduzida pela mesma parte interessada no fechamento.</li>
+        <li class="reveal">O comprador raramente tem acesso a alguém cuja função é exclusivamente representá-lo.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Seção 3 — a solução -->
+  <section class="section section-tint" id="solucao">
+    <div class="container narrow">
+      <span class="eyebrow">O modelo</span>
+      <h2 class="reveal">Um modelo de representação já validado — em mercados mais maduros</h2>
+      <p class="section-body reveal">Nos Estados Unidos, a representação exclusiva do comprador — modelo conhecido como <em>buyer's agent</em> — é prática estabelecida há décadas, com regulamentação e adoção amplas. O profissional que atua nesse modelo não tem vínculo com o vendedor, não recebe comissão de captação, e sua função é exclusivamente identificar o imóvel mais adequado ao objetivo do comprador, dentro de todo o mercado disponível — não apenas do estoque próprio.</p>
+
+      <div class="stat-row reveal">
+        <div class="stat">
+          <span class="num gold-num" data-count="8.2">8,2</span>
+          <span class="label">imóveis comprados ao longo da vida, em média, nos EUA</span>
+        </div>
+        <div class="stat">
+          <span class="num" data-count="1.7">1,7</span>
+          <span class="label">imóveis comprados ao longo da vida, em média, no Brasil</span>
+        </div>
+      </div>
+
+      <p class="section-body reveal">Um indicativo de que um processo de compra mais estruturado e assistido reduz a hesitação e aumenta a frequência de novas aquisições. A Ethex aplica esse mesmo princípio de representação exclusiva ao mercado brasileiro, ainda pouco explorado nesse formato.</p>
+
+      <ul class="bullets">
+        <li class="reveal">Representação dedicada exclusivamente ao comprador, sem vínculo com o vendedor ou a imobiliária de origem do imóvel.</li>
+        <li class="reveal">Busca conduzida em todo o mercado disponível, não limitada a uma captação própria.</li>
+        <li class="reveal">Modelo já consolidado internacionalmente, com histórico mensurável de resultado para o comprador.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Seção 4 — como funciona -->
+  <section class="section" id="como-funciona">
+    <div class="container narrow">
+      <span class="eyebrow">O processo</span>
+      <h2 class="reveal">Como funciona a assessoria</h2>
+      <p class="section-body reveal">O processo é estruturado em etapas sequenciais, cada uma com um objetivo específico dentro da sua decisão de compra.</p>
+
+      <div class="steps">
+        <div class="steps-track"><div class="steps-track-fill" id="stepsTrackFill"></div></div>
+        <div class="step reveal">
+          <div class="step-num">1</div>
+          <div class="step-copy">
+            <h3>Entrevista de qualificação</h3>
+            <p>Levantamento detalhado do seu objetivo com a aquisição (moradia, investimento, uso por temporada, entre outros), orçamento disponível, região de interesse e critérios prioritários — a base de todo o trabalho seguinte.</p>
+          </div>
+        </div>
+        <div class="step reveal">
+          <div class="step-num">2</div>
+          <div class="step-copy">
+            <h3>Busca ampla no mercado</h3>
+            <p>Levantamento de opções compatíveis com seu perfil, sem limitação a uma captação própria — o critério de seleção é a adequação ao seu objetivo, não a disponibilidade de estoque.</p>
+          </div>
+        </div>
+        <div class="step reveal">
+          <div class="step-num">3</div>
+          <div class="step-copy">
+            <h3>Avaliação técnica e jurídica</h3>
+            <p>Cada imóvel potencialmente adequado passa por análise de documentação e, quando aplicável, visita presencial para verificação de condições reais — antes de qualquer apresentação a você.</p>
+          </div>
+        </div>
+        <div class="step reveal">
+          <div class="step-num">4</div>
+          <div class="step-copy">
+            <h3>Apresentação curada</h3>
+            <p>Você recebe uma seleção reduzida de opções já avaliadas, em vez de uma lista extensa de links para triagem manual.</p>
+          </div>
+        </div>
+        <div class="step reveal">
+          <div class="step-num">5</div>
+          <div class="step-copy">
+            <h3>Acompanhamento até o fechamento</h3>
+            <p>Suporte contínuo durante negociação, documentação e formalização — até a conclusão da aquisição.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Seção 5 — diferenciais -->
+  <section class="section section-dark" id="diferenciais">
+    <div class="container">
+      <span class="eyebrow">Diferenciais</span>
+      <h2 class="reveal">Diferenciais da assessoria Ethex</h2>
+
+      <div class="diff-grid">
+        <div class="diff-card reveal">
+          <span class="diff-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="6"/><path d="M12 8.5v7M14 10.2c0-.9-.9-1.7-2-1.7s-2 .7-2 1.6c0 2 4 1.2 4 3.2 0 .9-.9 1.7-2 1.7s-2-.8-2-1.7"/></svg></span>
+          <h3>Remuneração vinculada ao fechamento</h3>
+          <p>Não há custo adicional para o comprador. A remuneração da assessoria é baseada no modelo convencional do mercado imobiliário — recebida por meio de comissão no momento do fechamento do imóvel. Você não paga nada a mais por ter representação exclusiva.</p>
+        </div>
+        <div class="diff-card reveal">
+          <span class="diff-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-5.2-5.2"/></svg></span>
+          <h3>Busca sem limitação de estoque</h3>
+          <p>A seleção de imóveis não se restringe a uma captação própria — o critério de inclusão é a adequação ao seu perfil, dentro de todo o mercado disponível na região de interesse.</p>
+        </div>
+        <div class="diff-card reveal">
+          <span class="diff-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s7-7.5 7-12a7 7 0 1 0-14 0c0 4.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></svg></span>
+          <h3>Visita guiada e inteligente</h3>
+          <p>Você só visita os imóveis que já passaram por avaliação prévia de adequação ao seu perfil — evitando deslocamento e tempo perdido. Cada visita é preparada com antecedência, com pontos de atenção já identificados.</p>
+        </div>
+        <div class="diff-card reveal">
+          <span class="diff-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/></svg></span>
+          <h3>Curadoria orientada por objetivo</h3>
+          <p>O processo de seleção considera a finalidade real da aquisição — moradia, investimento, temporada, entre outras — e não apenas critérios genéricos de preço e localização.</p>
+        </div>
+        <div class="diff-card reveal">
+          <span class="diff-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
+          <h3>Privacidade e sigilo durante o processo</h3>
+          <p>Sua identidade e seus critérios de negociação não são expostos ao vendedor ou à imobiliária de origem durante a busca. O contato direto ocorre apenas quando você decide avançar.</p>
+        </div>
+        <div class="diff-card reveal">
+          <span class="diff-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 5-3.5 8-7 9-3.5-1-7-4-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg></span>
+          <h3>Acompanhamento técnico e jurídico integrado</h3>
+          <p>Da entrevista inicial à formalização, o acompanhamento inclui avaliação documental e suporte durante toda a negociação — não se encerra na indicação do imóvel.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Seção 6 — formulário -->
+  <section class="section section-tint" id="formulario">
+    <div class="container narrow">
+      <span class="eyebrow">Fale conosco</span>
+      <h2 class="reveal">Solicite sua entrevista de qualificação</h2>
+      <p class="section-body reveal">Preencha as informações abaixo. Entraremos em contato pelo WhatsApp para agendar sua entrevista, sem custo e sem compromisso.</p>
+
+      <form class="form-card reveal" id="qualificacao" novalidate>
+        <div class="field">
+          <label for="nome">Nome</label>
+          <input type="text" id="nome" name="nome" placeholder="Seu nome completo" autocomplete="name" maxlength="120" required>
+        </div>
+
+        <div class="field">
+          <label for="whatsapp">WhatsApp</label>
+          <input type="tel" id="whatsapp" name="whatsapp" placeholder="(00) 00000-0000" autocomplete="tel" inputmode="tel" maxlength="20" required>
+        </div>
+
+        <fieldset class="fieldset">
+          <legend>Qual o motivo da aquisição do imóvel?</legend>
+          <div class="pill-group" role="radiogroup">
+            <input type="radio" id="motivo-moradia" name="motivo" value="moradia" required>
+            <label for="motivo-moradia">Moradia própria</label>
+            <input type="radio" id="motivo-investimento" name="motivo" value="investimento">
+            <label for="motivo-investimento">Investimento</label>
+            <input type="radio" id="motivo-temporada" name="motivo" value="temporada">
+            <label for="motivo-temporada">Temporada / locação por curto prazo</label>
+            <input type="radio" id="motivo-outro" name="motivo" value="outro">
+            <label for="motivo-outro">Outro motivo</label>
+          </div>
+        </fieldset>
+
+        <fieldset class="fieldset">
+          <legend>Qual o orçamento disponível?</legend>
+          <div class="pill-group" role="radiogroup">
+            <input type="radio" id="orc-1" name="orcamento" value="0-300000" required>
+            <label for="orc-1">Até R$ 300 mil</label>
+            <input type="radio" id="orc-2" name="orcamento" value="300000-600000">
+            <label for="orc-2">R$ 300 mil a R$ 600 mil</label>
+            <input type="radio" id="orc-3" name="orcamento" value="600000-1000000">
+            <label for="orc-3">R$ 600 mil a R$ 1 milhão</label>
+            <input type="radio" id="orc-4" name="orcamento" value="1000000-">
+            <label for="orc-4">Acima de R$ 1 milhão</label>
+          </div>
+        </fieldset>
+
+        <input class="hp" type="text" id="site" name="site" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+        <div class="consent">
+          <input type="checkbox" id="consentimento" name="consentimento" required>
+          <label for="consentimento">Li e aceito a <a href="politica-privacidade.html" target="_blank" rel="noopener">Política de Privacidade</a> e autorizo o uso dos meus dados para fins de contato e qualificação, conforme a Lei Geral de Proteção de Dados (LGPD).</label>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submit">
+          Enviar solicitação
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16m-6-6 6 6-6 6"/></svg>
+        </button>
+        <p class="form-status" id="status" role="status" aria-live="polite"></p>
+        <p class="submit-note">Suas informações são tratadas com confidencialidade e utilizadas exclusivamente para sua entrevista de qualificação.</p>
+      </form>
+    </div>
+  </section>
+
+  <!-- Seção 7 — rodapé institucional -->
+  <footer class="footer-main">
+    <div class="container narrow">
+      <span class="eyebrow">Ethex</span>
+      <h2 class="reveal">Assessoria de representação exclusiva do comprador</h2>
+      <p class="section-body reveal">Atuamos exclusivamente na representação do comprador, sem vínculo com vendedores ou imobiliárias de origem. Nosso compromisso é técnico, e nossa remuneração é vinculada ao resultado — não à venda.</p>
+      <a href="#formulario" class="footer-cta reveal">Ainda com dúvidas? Solicite sua entrevista de qualificação →</a>
+    </div>
+
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-contact">
+          <div><strong>WhatsApp:</strong> <span class="placeholder-note">[preencher número]</span></div>
+          <div><strong>E-mail:</strong> <span class="placeholder-note">[preencher e-mail]</span></div>
+        </div>
+        <div class="footer-links">
+          <a href="politica-privacidade.html">Política de Privacidade</a>
+          <a href="termos-uso.html">Termos de Uso</a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="footer-brand-mark">
+          <img src="assets/icon-mark.png" width="402" height="360" alt="Ethex">
+        </div>
+        <p class="footer-copy">© 2026 Ethex. Todos os direitos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var SUPABASE_URL = "https://dpfiugqvozouoyfcsjbj.supabase.co";
+      // Chave pública (anon): pode ficar no navegador. A tabela `lead` só aceita INSERT (RLS).
+      var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRwZml1Z3F2b3pvdW95ZmNzamJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk3MjA1ODcsImV4cCI6MjEwNTI5NjU4N30.20R6MLkcu3INod2HlPCuxfFCUZejUOWMxLI2S_1aAWg";
+
+      var form = document.getElementById("qualificacao");
+      var nomeInput = document.getElementById("nome");
+      var whatsappInput = document.getElementById("whatsapp");
+      var honeypot = document.getElementById("site");
+      var consentInput = document.getElementById("consentimento");
+      var button = document.getElementById("submit");
+      var status = document.getElementById("status");
+      var loadedAt = Date.now();
+
+      function say(text, type) {
+        status.textContent = text;
+        status.className = "form-status " + (type || "");
+      }
+
+      // "0-300000" -> [0, 300000]; "1000000-" -> [1000000, null]
+      function parseFaixa(valor) {
+        if (!valor) return [null, null];
+        var partes = valor.split("-");
+        var min = partes[0] === "" ? null : Number(partes[0]);
+        var max = partes[1] === "" || partes[1] === undefined ? null : Number(partes[1]);
+        return [min, max];
+      }
+
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        var nome = nomeInput.value.trim();
+        var whatsapp = whatsappInput.value.trim();
+        var motivo = form.querySelector('input[name="motivo"]:checked');
+        var orcamento = form.querySelector('input[name="orcamento"]:checked');
+
+        if (!nome) {
+          say("Digite seu nome.", "err");
+          nomeInput.focus();
+          return;
+        }
+        if (!whatsapp) {
+          say("Digite seu WhatsApp.", "err");
+          whatsappInput.focus();
+          return;
+        }
+        if (!motivo) {
+          say("Selecione o motivo da aquisição.", "err");
+          return;
+        }
+        if (!orcamento) {
+          say("Selecione a faixa de orçamento.", "err");
+          return;
+        }
+        if (!consentInput.checked) {
+          say("É preciso aceitar a Política de Privacidade para continuar.", "err");
+          consentInput.focus();
+          return;
+        }
+
+        // Robôs: campo escondido preenchido ou envio rápido demais. Finge sucesso e não grava.
+        if (honeypot.value || Date.now() - loadedAt < 1500) {
+          say("Obrigado! Em breve entraremos em contato pelo WhatsApp.", "ok");
+          form.reset();
+          return;
+        }
+
+        button.disabled = true;
+        say("Enviando…");
+
+        var faixa = parseFaixa(orcamento.value);
+
+        fetch(SUPABASE_URL + "/rest/v1/lead", {
+          method: "POST",
+          headers: {
+            "apikey": SUPABASE_ANON_KEY,
+            "Authorization": "Bearer " + SUPABASE_ANON_KEY,
+            "Content-Type": "application/json",
+            "Prefer": "return=minimal"
+          },
+          body: JSON.stringify({
+            nome: nome,
+            telefone: whatsapp,
+            finalidade: motivo.value,
+            orcamento_min: faixa[0],
+            orcamento_max: faixa[1],
+            consentimento_lgpd: true,
+            origem: "landing-principal"
+          })
+        }).then(function (res) {
+          if (res.ok) {
+            say("Obrigado! Em breve entraremos em contato pelo WhatsApp.", "ok");
+            form.reset();
+          } else {
+            say("Não foi possível enviar agora. Tente novamente em instantes.", "err");
+          }
+        }).catch(function () {
+          say("Sem conexão. Verifique sua internet e tente novamente.", "err");
+        }).then(function () {
+          button.disabled = false;
+        });
+      });
+    })();
+  </script>
+
+  <script>
+    (function () {
+      var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      // Revelação ao rolar: cada elemento aparece quando entra na tela.
+      // O atraso entre irmãos (--i) cria o efeito de cascata em listas/grades.
+      var revealEls = Array.prototype.slice.call(document.querySelectorAll(".reveal"));
+      revealEls.forEach(function (el) {
+        var siblings = Array.prototype.filter.call(el.parentElement.children, function (c) {
+          return c.classList.contains("reveal");
+        });
+        el.style.setProperty("--i", siblings.indexOf(el));
+      });
+
+      if (reduceMotion || !("IntersectionObserver" in window)) {
+        revealEls.forEach(function (el) { el.classList.add("is-visible"); });
+      } else {
+        var revealIo = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("is-visible");
+              revealIo.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
+        revealEls.forEach(function (el) { revealIo.observe(el); });
+      }
+
+      // Estatísticas contam de 0 até o valor final na primeira vez que aparecem na tela.
+      var countEls = document.querySelectorAll(".num[data-count]");
+      if (countEls.length && !reduceMotion && "IntersectionObserver" in window) {
+        var animateCount = function (el) {
+          var target = parseFloat(el.getAttribute("data-count"));
+          var decimals = target % 1 !== 0 ? 1 : 0;
+          var duration = 1100;
+          var start = null;
+          function step(ts) {
+            if (start === null) start = ts;
+            var progress = Math.min((ts - start) / duration, 1);
+            var eased = 1 - Math.pow(1 - progress, 3);
+            el.textContent = (target * eased).toLocaleString("pt-BR", {
+              minimumFractionDigits: decimals,
+              maximumFractionDigits: decimals
+            });
+            if (progress < 1) requestAnimationFrame(step);
+          }
+          requestAnimationFrame(step);
+        };
+        var countIo = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              animateCount(entry.target);
+              countIo.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.4 });
+        countEls.forEach(function (el) { countIo.observe(el); });
+      }
+
+      // Trajeto do "como funciona": o traço preenche em dourado conforme cada passo é alcançado.
+      var stepsWrap = document.querySelector(".steps");
+      var trackEl = document.querySelector(".steps-track");
+      var stepEls = Array.prototype.slice.call(document.querySelectorAll(".steps .step"));
+      var trackFill = document.getElementById("stepsTrackFill");
+      if (stepsWrap && trackEl && stepEls.length) {
+        // O círculo do passo fica no topo da linha do texto (que é mais alta que ele),
+        // então a posição real precisa ser medida — não dá para travar por CSS.
+        var positionTrack = function () {
+          var nums = stepsWrap.querySelectorAll(".step-num");
+          if (nums.length < 2) return;
+          var wrapTop = stepsWrap.getBoundingClientRect().top;
+          var firstRect = nums[0].getBoundingClientRect();
+          var lastRect = nums[nums.length - 1].getBoundingClientRect();
+          var top = firstRect.top - wrapTop + firstRect.height / 2;
+          var bottom = lastRect.top - wrapTop + lastRect.height / 2;
+          trackEl.style.top = top + "px";
+          trackEl.style.height = Math.max(0, bottom - top) + "px";
+        };
+        positionTrack();
+        window.addEventListener("load", positionTrack);
+        window.addEventListener("resize", positionTrack);
+      }
+      if (stepEls.length && trackFill) {
+        var maxStepIndex = -1;
+        function updateStepsProgress() {
+          var pct = stepEls.length > 1 ? (maxStepIndex / (stepEls.length - 1)) * 100 : 0;
+          trackFill.style.height = Math.max(0, pct) + "%";
+        }
+        if (reduceMotion || !("IntersectionObserver" in window)) {
+          maxStepIndex = stepEls.length - 1;
+          stepEls.forEach(function (el) {
+            var num = el.querySelector(".step-num");
+            if (num) num.classList.add("is-lit");
+          });
+          updateStepsProgress();
+          if (typeof positionTrack === "function") positionTrack();
+        } else {
+          var stepIo = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+              if (!entry.isIntersecting) return;
+              // O passo ainda está com a animação de entrada em curso — remede depois
+              // que ela terminar (mesma duração da transição do .reveal).
+              if (typeof positionTrack === "function") setTimeout(positionTrack, 750);
+              var idx = stepEls.indexOf(entry.target);
+              var num = entry.target.querySelector(".step-num");
+              if (num) num.classList.add("is-lit");
+              if (idx > maxStepIndex) {
+                maxStepIndex = idx;
+                updateStepsProgress();
+              }
+            });
+          }, { threshold: 0.5 });
+          stepEls.forEach(function (el) { stepIo.observe(el); });
+        }
+      }
+
+      // Barra fixa de CTA: aparece depois que a hero sai da tela, some de novo perto do formulário.
+      var stickyBar = document.getElementById("stickyBar");
+      var heroEl = document.querySelector(".hero-page");
+      var formEl = document.getElementById("formulario");
+      if (stickyBar && heroEl && formEl && "IntersectionObserver" in window) {
+        var heroVisible = true;
+        var formVisible = false;
+        function updateSticky() {
+          stickyBar.classList.toggle("is-visible", !heroVisible && !formVisible);
+        }
+        new IntersectionObserver(function (entries) {
+          heroVisible = entries[0].isIntersecting;
+          updateSticky();
+        }, { threshold: 0 }).observe(heroEl);
+        new IntersectionObserver(function (entries) {
+          formVisible = entries[0].isIntersecting;
+          updateSticky();
+        }, { threshold: 0 }).observe(formEl);
+      }
+
+      // Menu do topo: destaca a seção que está sendo lida no momento.
+      var navLinks = Array.prototype.slice.call(document.querySelectorAll(".nav a"));
+      if (navLinks.length && "IntersectionObserver" in window) {
+        var navSections = navLinks
+          .map(function (a) { return document.querySelector(a.getAttribute("href")); })
+          .filter(Boolean);
+        var navIo = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            navLinks.forEach(function (a) { a.classList.remove("is-active"); });
+            var active = navLinks.filter(function (a) {
+              return a.getAttribute("href") === "#" + entry.target.id;
+            })[0];
+            if (active) active.classList.add("is-active");
+          });
+        }, { rootMargin: "-40% 0px -50% 0px", threshold: 0 });
+        navSections.forEach(function (s) { navIo.observe(s); });
+      }
+    })();
+  </script>
+</body>
+</html>
