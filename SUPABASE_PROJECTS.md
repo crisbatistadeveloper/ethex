@@ -8,14 +8,13 @@ Referência local, não versionada. As variáveis reais ficam em `.env.local`
 
 - Projeto: `cris.4mind@gmail.com's Project`
 - URL: `https://dpfiugqvozouoyfcsjbj.supabase.co`
-- Migrações aplicadas: `0001` a `0005`
+- Migrações aplicadas: `0001` a `0022` (conferido com `supabase/tests/diagnostico_migrations.sql`)
 
 ## Dev/staging (`dev` → só local)
 
 - Projeto: `ethex-dev`
 - URL: `https://eljinryrsmqcsjwrucyi.supabase.co`
 - Migrações aplicadas: `0001` a `0022` (conferido com `supabase/tests/diagnostico_migrations.sql`)
-- Pendente em produção: `0006` a `0022` (só após validação no dev)
 
 ## Fluxo
 
