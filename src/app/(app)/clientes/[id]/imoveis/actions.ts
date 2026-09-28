@@ -7,17 +7,27 @@ import { fetchLinkMetadata } from "@/lib/link-metadata";
 import { geocodeAddress, type GeocodeResult } from "@/lib/geocode";
 import { numField, strField } from "@/lib/form-utils";
 import { ensureBusca } from "@/lib/busca";
-import type { Caracteristicas, CuradoriaStatus, ImovelRow } from "@/lib/database.types";
+import { parseStatusConstrucao } from "@/lib/labels";
+import {
+  caracteristicasDoForm,
+  extrairCaracteristicas,
+  type CaracteristicasImovel,
+} from "@/lib/imovel-caracteristicas";
+import type {
+  Caracteristicas,
+  CuradoriaStatus,
+  ImovelRow,
+  ImovelStatusConstrucao,
+} from "@/lib/database.types";
 
 export interface LinkPreview {
   existente: boolean;
+  status_construcao: ImovelStatusConstrucao | null;
   titulo: string | null;
   imagem: string | null;
   descricao: string | null;
   preco: number | null;
-  m2: number | null;
-  quartos: number | null;
-  vagas: number | null;
+  caracteristicas: CaracteristicasImovel;
   nome_contato: string | null;
   telefone_contato: string | null;
   tipo_contato: string | null;
@@ -27,13 +37,12 @@ export interface LinkPreview {
 export async function fetchLinkPreview(url: string): Promise<LinkPreview> {
   const vazio: LinkPreview = {
     existente: false,
+    status_construcao: null,
     titulo: null,
     imagem: null,
     descricao: null,
     preco: null,
-    m2: null,
-    quartos: null,
-    vagas: null,
+    caracteristicas: extrairCaracteristicas(null),
     nome_contato: null,
     telefone_contato: null,
     tipo_contato: null,
@@ -53,13 +62,12 @@ export async function fetchLinkPreview(url: string): Promise<LinkPreview> {
   if (existente) {
     return {
       existente: true,
+      status_construcao: existente.status_construcao ?? null,
       titulo: existente.caracteristicas?.titulo ?? null,
       imagem: existente.caracteristicas?.imagem_anuncio ?? null,
       descricao: existente.caracteristicas?.descricao ?? null,
       preco: existente.preco,
-      m2: existente.caracteristicas?.m2 ?? null,
-      quartos: existente.caracteristicas?.quartos ?? null,
-      vagas: existente.caracteristicas?.vagas ?? null,
+      caracteristicas: extrairCaracteristicas(existente),
       nome_contato: existente.nome_contato,
       telefone_contato: existente.telefone_contato,
       tipo_contato: existente.tipo_contato,
@@ -115,17 +123,31 @@ export async function createImovel(clienteId: string, formData: FormData) {
   }
 
   const buscaId = await ensureBusca(perfil.id);
+  const statusConstrucao = parseStatusConstrucao(
+    strField(formData, "status_construcao")
+  );
 
   const { data: existente } = await supabase
     .from("imovel")
-    .select("id")
+    .select("*")
     .eq("url", url)
+    .returns<ImovelRow[]>()
     .maybeSingle();
 
   let imovelId: string;
 
   if (existente) {
-    imovelId = existente.id as string;
+    imovelId = existente.id;
+    // Imóvel já no catálogo: só completa o que ainda não foi informado.
+    const doForm = { ...caracteristicasDoForm(formData), status_construcao: statusConstrucao };
+    const complemento = Object.fromEntries(
+      Object.entries(doForm).filter(
+        ([k, v]) => v != null && existente[k as keyof typeof doForm] == null
+      )
+    );
+    if (Object.keys(complemento).length > 0) {
+      await supabase.from("imovel").update(complemento).eq("id", imovelId);
+    }
   } else {
     let fonte = "outro";
     try {
@@ -135,9 +157,6 @@ export async function createImovel(clienteId: string, formData: FormData) {
     }
 
     const caracteristicas: Caracteristicas = {
-      m2: numField(formData, "m2") ?? undefined,
-      quartos: numField(formData, "quartos") ?? undefined,
-      vagas: numField(formData, "vagas") ?? undefined,
       titulo: strField(formData, "titulo") ?? undefined,
       imagem_anuncio: strField(formData, "imagem_anuncio") ?? undefined,
       descricao: strField(formData, "descricao") ?? undefined,
@@ -150,6 +169,8 @@ export async function createImovel(clienteId: string, formData: FormData) {
         fonte,
         preco: numField(formData, "preco"),
         caracteristicas,
+        ...caracteristicasDoForm(formData),
+        status_construcao: statusConstrucao,
         nome_contato: strField(formData, "nome_contato"),
         telefone_contato: strField(formData, "telefone_contato"),
         tipo_contato: strField(formData, "tipo_contato"),
@@ -173,6 +194,7 @@ export async function createImovel(clienteId: string, formData: FormData) {
     .maybeSingle();
 
   let curadoriaId = curadoriaExistente?.id as string | undefined;
+  const jaNaCuradoria = Boolean(curadoriaId);
 
   if (!curadoriaId) {
     const { data: curadoria, error } = await supabase
@@ -190,7 +212,10 @@ export async function createImovel(clienteId: string, formData: FormData) {
   }
 
   revalidatePath(`/clientes/${clienteId}`);
-  redirect(`/clientes/${clienteId}/imoveis/${curadoriaId}`);
+  // Garimpo: volta para a busca do cliente em vez de abrir o detalhe.
+  redirect(
+    `/clientes/${clienteId}/imoveis/novo?adicionado=${curadoriaId}${jaNaCuradoria ? "&ja=1" : ""}`
+  );
 }
 
 export async function updateImovel(
@@ -203,26 +228,14 @@ export async function updateImovel(
 
   const supabase = await createClient();
 
-  const { data: atual } = await supabase
-    .from("imovel")
-    .select("caracteristicas")
-    .eq("id", imovelId)
-    .maybeSingle();
-
-  const caracteristicasAtual = (atual?.caracteristicas ?? {}) as Caracteristicas;
-
-  const caracteristicas: Caracteristicas = {
-    ...caracteristicasAtual,
-    m2: numField(formData, "m2") ?? undefined,
-    quartos: numField(formData, "quartos") ?? undefined,
-    vagas: numField(formData, "vagas") ?? undefined,
-  };
-
-  await supabase
+  const { error } = await supabase
     .from("imovel")
     .update({
       preco: numField(formData, "preco"),
-      caracteristicas,
+      ...caracteristicasDoForm(formData),
+      status_construcao: parseStatusConstrucao(
+        strField(formData, "status_construcao")
+      ),
       latitude: numField(formData, "latitude"),
       longitude: numField(formData, "longitude"),
       endereco_texto: strField(formData, "endereco_texto"),
@@ -231,6 +244,12 @@ export async function updateImovel(
       tipo_contato: strField(formData, "tipo_contato"),
     })
     .eq("id", imovelId);
+
+  if (error) {
+    redirect(
+      `/clientes/${clienteId}/imoveis/${curadoriaId}?error=${encodeURIComponent(error.message)}`
+    );
+  }
 
   revalidatePath(`/clientes/${clienteId}`);
   revalidatePath(`/clientes/${clienteId}/imoveis/${curadoriaId}`);

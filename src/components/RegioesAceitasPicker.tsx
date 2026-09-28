@@ -16,7 +16,7 @@ interface Cidade {
 }
 
 const inputClass =
-  "mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-500 focus:outline-none";
+  "mt-1 w-full rounded-md border border-[#e4e0d9] px-3 py-2 text-sm focus:border-[#b8925a] focus:outline-none";
 
 export function RegioesAceitasPicker({
   name,
@@ -87,7 +87,7 @@ export function RegioesAceitasPicker({
     <div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_1.5fr_1.5fr_auto]">
         <div>
-          <label className="block text-xs font-medium text-neutral-500">
+          <label className="block text-xs font-medium text-[#5b6472]">
             Estado
           </label>
           <select
@@ -104,7 +104,7 @@ export function RegioesAceitasPicker({
           </select>
         </div>
         <div>
-          <label className="block text-xs font-medium text-neutral-500">
+          <label className="block text-xs font-medium text-[#5b6472]">
             Cidade
           </label>
           <select
@@ -122,7 +122,7 @@ export function RegioesAceitasPicker({
           </select>
         </div>
         <div>
-          <label className="block text-xs font-medium text-neutral-500">
+          <label className="block text-xs font-medium text-[#5b6472]">
             Bairro (opcional)
           </label>
           <input
@@ -137,7 +137,7 @@ export function RegioesAceitasPicker({
             type="button"
             onClick={addItem}
             disabled={!uf || !cidade}
-            className="mt-1 rounded-md border border-neutral-300 px-3 py-2 text-sm hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-50"
+            className="mt-1 rounded-md border border-[#e4e0d9] px-3 py-2 text-sm hover:bg-[#efe9e0] disabled:cursor-not-allowed disabled:opacity-50"
           >
             Adicionar
           </button>
@@ -151,14 +151,14 @@ export function RegioesAceitasPicker({
           {items.map((item, index) => (
             <li
               key={`${item.uf}-${item.cidade}-${item.bairro ?? ""}`}
-              className="flex items-center gap-2 rounded-full border border-neutral-300 bg-neutral-50 px-3 py-1 text-sm"
+              className="flex items-center gap-2 rounded-full border border-[#e4e0d9] bg-[#faf8f5] px-3 py-1 text-sm"
             >
               {formatRegiao(item)}
               <button
                 type="button"
                 onClick={() => removeItem(index)}
                 aria-label={`Remover ${formatRegiao(item)}`}
-                className="text-neutral-400 hover:text-neutral-700"
+                className="text-[#5b6472] hover:text-[#0b1f34]"
               >
                 ×
               </button>

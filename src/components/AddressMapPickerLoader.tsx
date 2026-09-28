@@ -9,7 +9,7 @@ export const AddressMapPicker = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="h-64 w-full animate-pulse rounded-md border border-neutral-200 bg-neutral-100" />
+      <div className="h-64 w-full animate-pulse rounded-md border border-[#e4e0d9] bg-[#efe9e0]" />
     ),
   }
 );

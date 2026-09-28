@@ -24,18 +24,18 @@ export default async function ClientesPage() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">
+        <h1 className="text-2xl font-bold text-[#0b1f34]">
           {usuario?.papel === "admin" ? "Todos os clientes" : "Meus clientes"}
         </h1>
         <Link
           href="/clientes/novo"
-          className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-800"
+          className="rounded-md bg-[#d6b072] px-4 py-2 text-sm font-semibold text-[#0b1f34] hover:brightness-105"
         >
           Novo cliente
         </Link>
       </div>
 
-      <div className="mt-6 overflow-hidden rounded-lg border border-neutral-200 bg-white">
+      <div className="mt-6 overflow-hidden rounded-lg border border-[#e4e0d9] bg-white">
         {error && (
           <p className="p-4 text-sm text-red-700">
             Erro ao carregar clientes: {error.message}
@@ -43,14 +43,14 @@ export default async function ClientesPage() {
         )}
 
         {!error && (!clientes || clientes.length === 0) && (
-          <p className="p-8 text-center text-sm text-neutral-500">
+          <p className="p-8 text-center text-sm text-[#5b6472]">
             Nenhum cliente cadastrado ainda.
           </p>
         )}
 
         {!error && clientes && clientes.length > 0 && (
           <table className="w-full text-left text-sm">
-            <thead className="border-b border-neutral-200 bg-neutral-50 text-neutral-500">
+            <thead className="border-b border-[#e4e0d9] bg-[#faf8f5] text-[#5b6472]">
               <tr>
                 <th className="px-4 py-3 font-medium">Nome</th>
                 <th className="px-4 py-3 font-medium">Finalidade</th>
@@ -64,17 +64,17 @@ export default async function ClientesPage() {
                 return (
                   <tr
                     key={cliente.id}
-                    className="border-b border-neutral-100 last:border-0 hover:bg-neutral-50"
+                    className="border-b border-[#e4e0d9] last:border-0 hover:bg-[#faf8f5]"
                   >
                     <td className="px-4 py-3">
                       <Link
                         href={`/clientes/${cliente.id}`}
-                        className="font-medium text-neutral-900 hover:underline"
+                        className="font-medium text-[#0b1f34] hover:underline"
                       >
                         {cliente.nome}
                       </Link>
                     </td>
-                    <td className="px-4 py-3 text-neutral-600">
+                    <td className="px-4 py-3 text-[#5b6472]">
                       {finalidade ? FINALIDADE_LABELS[finalidade] : "—"}
                     </td>
                     <td className="px-4 py-3">
@@ -84,7 +84,7 @@ export default async function ClientesPage() {
                         {STATUS_LABELS[cliente.status]}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-neutral-500">
+                    <td className="px-4 py-3 text-[#5b6472]">
                       {new Date(cliente.atualizado_em).toLocaleString("pt-BR")}
                     </td>
                   </tr>

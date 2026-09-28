@@ -11,8 +11,10 @@ export async function attachImovelToCliente(
   formData: FormData
 ) {
   const clienteId = strField(formData, "clienteId");
+  const origem = strField(formData, "origem");
+  const voltar = origem === `/imoveis/${imovelId}` ? origem : "/imoveis";
   if (!clienteId) {
-    redirect(`/imoveis?error=${encodeURIComponent("Selecione um cliente")}`);
+    redirect(`${voltar}?error=${encodeURIComponent("Selecione um cliente")}`);
   }
 
   const supabase = await createClient();
@@ -24,7 +26,7 @@ export async function attachImovelToCliente(
 
   if (!perfil) {
     redirect(
-      `/imoveis?error=${encodeURIComponent("Esse cliente ainda não tem perfil — finalize a entrevista antes")}`
+      `${voltar}?error=${encodeURIComponent("Esse cliente ainda não tem perfil — finalize a entrevista antes")}`
     );
   }
 

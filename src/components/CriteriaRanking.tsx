@@ -29,14 +29,14 @@ export function CriteriaRanking({
         const usedElsewhere = selection.filter((_, i) => i !== index);
         return (
           <div key={index}>
-            <label className="block text-xs font-medium text-neutral-500">
+            <label className="block text-xs font-medium text-[#5b6472]">
               {index + 1}º mais importante
             </label>
             <select
               name={`criterio_${index + 1}`}
               value={selection[index]}
               onChange={(e) => update(index, e.target.value)}
-              className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-500 focus:outline-none"
+              className="mt-1 w-full rounded-md border border-[#e4e0d9] px-3 py-2 text-sm focus:border-[#b8925a] focus:outline-none"
             >
               <option value="">—</option>
               {CRITERIOS.filter(

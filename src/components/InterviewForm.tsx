@@ -18,9 +18,9 @@ import type {
 } from "@/lib/database.types";
 
 const inputClass =
-  "mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-500 focus:outline-none";
-const labelClass = "block text-sm font-medium text-neutral-700";
-const checkboxRowClass = "flex items-center gap-2 text-sm text-neutral-700";
+  "mt-1 w-full rounded-md border border-[#e4e0d9] px-3 py-2 text-sm focus:border-[#b8925a] focus:outline-none";
+const labelClass = "block text-sm font-medium text-[#0b1f34]";
+const checkboxRowClass = "flex items-center gap-2 text-sm text-[#0b1f34]";
 
 const FINALIDADES: Finalidade[] = [
   "moradia",
@@ -47,9 +47,9 @@ export function InterviewForm({
 
   return (
     <form action={action} className="mt-6 space-y-8">
-      <section className="rounded-lg border border-neutral-200 bg-white p-6">
+      <section className="rounded-lg border border-[#e4e0d9] bg-white p-6">
         <h2 className="text-lg font-semibold">Finalidade</h2>
-        <p className="mt-1 text-sm text-neutral-500">
+        <p className="mt-1 text-sm text-[#5b6472]">
           Define quais perguntas específicas aparecem a seguir.
         </p>
         <select
@@ -70,7 +70,7 @@ export function InterviewForm({
         </select>
       </section>
 
-      <section className="rounded-lg border border-neutral-200 bg-white p-6">
+      <section className="rounded-lg border border-[#e4e0d9] bg-white p-6">
         <h2 className="text-lg font-semibold">Orçamento e condições</h2>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
@@ -110,7 +110,7 @@ export function InterviewForm({
         </div>
       </section>
 
-      <section className="rounded-lg border border-neutral-200 bg-white p-6">
+      <section className="rounded-lg border border-[#e4e0d9] bg-white p-6">
         <h2 className="text-lg font-semibold">Imóvel desejado</h2>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="sm:col-span-2">
@@ -164,7 +164,7 @@ export function InterviewForm({
       </section>
 
       {finalidade && (
-        <section className="rounded-lg border border-neutral-200 bg-white p-6">
+        <section className="rounded-lg border border-[#e4e0d9] bg-white p-6">
           <h2 className="text-lg font-semibold">
             Detalhes — {FINALIDADE_LABELS[finalidade]}
           </h2>
@@ -177,9 +177,9 @@ export function InterviewForm({
         </section>
       )}
 
-      <section className="rounded-lg border border-neutral-200 bg-white p-6">
+      <section className="rounded-lg border border-[#e4e0d9] bg-white p-6">
         <h2 className="text-lg font-semibold">Critérios priorizados</h2>
-        <p className="mt-1 text-sm text-neutral-500">
+        <p className="mt-1 text-sm text-[#5b6472]">
           Escolha os 3 critérios mais importantes para o cliente, em ordem.
         </p>
         <div className="mt-4">
@@ -187,7 +187,7 @@ export function InterviewForm({
         </div>
       </section>
 
-      <section className="rounded-lg border border-neutral-200 bg-white p-6">
+      <section className="rounded-lg border border-[#e4e0d9] bg-white p-6">
         <h2 className="text-lg font-semibold">Motivação e contexto</h2>
         <div className="mt-4 space-y-4">
           <div>
@@ -228,7 +228,7 @@ export function InterviewForm({
 
       <button
         type="submit"
-        className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-800"
+        className="rounded-md bg-[#d6b072] px-4 py-2 text-sm font-medium text-[#0b1f34] hover:brightness-105"
       >
         Salvar perfil
       </button>

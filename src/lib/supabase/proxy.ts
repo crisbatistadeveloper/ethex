@@ -1,7 +1,8 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PUBLIC_PATHS = ["/login"];
+// /apresentacao/[token]: link do cliente, sem login (acesso validado pelo token no banco).
+const PUBLIC_PATHS = ["/login", "/apresentacao/"];
 
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });

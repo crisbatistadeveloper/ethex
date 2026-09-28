@@ -1,7 +1,11 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getUsuarioAtual } from "@/lib/auth";
-import { FINALIDADE_LABELS, formatFaixaValores } from "@/lib/labels";
+import {
+  FINALIDADE_LABELS,
+  formatFaixaValores,
+  origemLeadLabel,
+} from "@/lib/labels";
 import { assignLead, convertLead, descartarLead } from "./actions";
 import type { LeadRow } from "@/lib/database.types";
 
@@ -16,7 +20,7 @@ const STATUS_COLORS: Record<LeadRow["status"], string> = {
   novo: "bg-blue-100 text-blue-800 border-blue-300",
   atribuido: "bg-amber-100 text-amber-800 border-amber-300",
   convertido: "bg-green-100 text-green-800 border-green-300",
-  descartado: "bg-neutral-100 text-neutral-600 border-neutral-300",
+  descartado: "bg-[#efe9e0] text-[#5b6472] border-[#e4e0d9]",
 };
 
 interface LeadComConsultor extends LeadRow {
@@ -26,9 +30,9 @@ interface LeadComConsultor extends LeadRow {
 export default async function LeadsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; sucesso?: string }>;
 }) {
-  const { error } = await searchParams;
+  const { error, sucesso } = await searchParams;
   const usuarioAtual = await getUsuarioAtual();
   const supabase = await createClient();
   const isAdmin = usuarioAtual?.papel === "admin";
@@ -45,14 +49,28 @@ export default async function LeadsPage({
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold">
-        {isAdmin ? "Leads" : "Meus leads"}
-      </h1>
-      <p className="mt-1 text-sm text-neutral-500">
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="text-2xl font-semibold">
+          {isAdmin ? "Leads" : "Meus leads"}
+        </h1>
+        <Link
+          href="/leads/novo"
+          className="rounded-md bg-[#d6b072] px-4 py-2 text-sm font-medium text-[#0b1f34] hover:brightness-105"
+        >
+          + Novo Lead
+        </Link>
+      </div>
+      <p className="mt-1 text-sm text-[#5b6472]">
         {isAdmin
-          ? "Capturados pela landing page. Atribua a um consultor para iniciar o contato."
+          ? "Captados pela landing page ou cadastrados manualmente. Atribua a um consultor para iniciar o contato."
           : "Leads atribuídos a você. Converta em cliente para iniciar a entrevista."}
       </p>
+
+      {sucesso && (
+        <p className="mt-4 rounded-md bg-green-50 px-3 py-2 text-sm text-green-700">
+          {sucesso}
+        </p>
+      )}
 
       {error && (
         <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
@@ -62,20 +80,20 @@ export default async function LeadsPage({
 
       <div className="mt-6 space-y-3">
         {(!leads || leads.length === 0) && (
-          <p className="text-sm text-neutral-500">Nenhum lead por aqui.</p>
+          <p className="text-sm text-[#5b6472]">Nenhum lead por aqui.</p>
         )}
 
         {leads?.map((lead) => (
           <div
             key={lead.id}
-            className="rounded-lg border border-neutral-200 bg-white p-4"
+            className="rounded-lg border border-[#e4e0d9] bg-white p-4"
           >
             <div className="flex items-start justify-between gap-2">
               <div>
-                <p className="font-medium text-neutral-900">
+                <p className="font-medium text-[#0b1f34]">
                   {lead.nome || lead.email}
                 </p>
-                <p className="text-xs text-neutral-500">
+                <p className="text-xs text-[#5b6472]">
                   {[lead.email, lead.telefone].filter(Boolean).join(" · ")}
                 </p>
               </div>
@@ -86,10 +104,10 @@ export default async function LeadsPage({
               </span>
             </div>
 
-            <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-neutral-600">
+            <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-[#5b6472]">
               {lead.finalidade && <span>{FINALIDADE_LABELS[lead.finalidade]}</span>}
               <span>{formatFaixaValores(lead.orcamento_min, lead.orcamento_max)}</span>
-              <span>Origem: {lead.origem}</span>
+              <span>Origem: {origemLeadLabel(lead.origem)}</span>
               {lead.usuario && <span>Consultor: {lead.usuario.nome}</span>}
             </div>
 
@@ -101,7 +119,7 @@ export default async function LeadsPage({
                 <select
                   name="consultorId"
                   defaultValue={lead.consultor_id ?? ""}
-                  className="rounded-md border border-neutral-300 px-2 py-1.5 text-xs focus:border-neutral-500 focus:outline-none"
+                  className="rounded-md border border-[#e4e0d9] px-2 py-1.5 text-xs focus:border-[#b8925a] focus:outline-none"
                 >
                   <option value="">Atribuir a...</option>
                   {consultores?.map((c) => (
@@ -112,7 +130,7 @@ export default async function LeadsPage({
                 </select>
                 <button
                   type="submit"
-                  className="rounded-md border border-neutral-300 px-2.5 py-1 text-xs hover:bg-neutral-100"
+                  className="rounded-md border border-[#e4e0d9] px-2.5 py-1 text-xs hover:bg-[#efe9e0]"
                 >
                   Atribuir
                 </button>
@@ -124,7 +142,7 @@ export default async function LeadsPage({
                 <form action={convertLead.bind(null, lead.id)}>
                   <button
                     type="submit"
-                    className="rounded-md bg-neutral-900 px-2.5 py-1 text-xs font-medium text-white hover:bg-neutral-800"
+                    className="rounded-md bg-[#d6b072] px-2.5 py-1 text-xs font-medium text-[#0b1f34] hover:brightness-105"
                   >
                     Converter em cliente
                   </button>
@@ -143,7 +161,7 @@ export default async function LeadsPage({
             {lead.status === "convertido" && lead.cliente_id && (
               <Link
                 href={`/clientes/${lead.cliente_id}`}
-                className="mt-3 inline-block text-xs text-neutral-500 hover:underline"
+                className="mt-3 inline-block text-xs text-[#5b6472] hover:underline"
               >
                 Ver cliente →
               </Link>

@@ -6,6 +6,8 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { strField } from "@/lib/form-utils";
 import type { ClienteStatus } from "@/lib/database.types";
+import { ensureOportunidadeForCliente } from "@/lib/crm-oportunidade";
+import { etapaFromClienteStatus } from "@/lib/crm";
 
 const novoClienteSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
@@ -54,7 +56,15 @@ export async function createCliente(formData: FormData) {
     );
   }
 
+  await ensureOportunidadeForCliente({
+    clienteId: data.id,
+    consultorId: user.id,
+    nomeCliente: parsed.data.nome,
+    etapa: etapaFromClienteStatus("em_entrevista"),
+  });
+
   revalidatePath("/clientes");
+  revalidatePath("/crm");
   redirect(`/clientes/${data.id}`);
 }
 

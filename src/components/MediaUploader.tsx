@@ -70,7 +70,7 @@ export function MediaUploader({
         className="text-sm"
       />
       {uploading && (
-        <p className="mt-1 text-xs text-neutral-500">Enviando...</p>
+        <p className="mt-1 text-xs text-[#5b6472]">Enviando...</p>
       )}
       {erro && <p className="mt-1 text-xs text-red-600">{erro}</p>}
 
@@ -79,7 +79,7 @@ export function MediaUploader({
           {urls.map((url) => (
             <div
               key={url}
-              className="group relative aspect-square overflow-hidden rounded-md border border-neutral-200"
+              className="group relative aspect-square overflow-hidden rounded-md border border-[#e4e0d9]"
             >
               {isVideo(url) ? (
                 <video src={url} className="h-full w-full object-cover" muted />

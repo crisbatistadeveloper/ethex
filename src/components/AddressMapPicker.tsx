@@ -97,21 +97,21 @@ export function AddressMapPicker({
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Buscar endereço..."
-          className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-500 focus:outline-none"
+          className="w-full rounded-md border border-[#e4e0d9] px-3 py-2 text-sm focus:border-[#b8925a] focus:outline-none"
         />
         {isPending && (
-          <span className="absolute right-3 top-2.5 text-xs text-neutral-400">
+          <span className="absolute right-3 top-2.5 text-xs text-[#5b6472]">
             buscando...
           </span>
         )}
         {suggestionsVisiveis.length > 0 && (
-          <ul className="absolute z-[1000] mt-1 w-full rounded-md border border-neutral-200 bg-white shadow-lg">
+          <ul className="absolute z-[1000] mt-1 w-full rounded-md border border-[#e4e0d9] bg-white shadow-lg">
             {suggestionsVisiveis.map((s) => (
               <li key={`${s.lat}-${s.lon}`}>
                 <button
                   type="button"
                   onClick={() => selecionarSugestao(s)}
-                  className="block w-full px-3 py-2 text-left text-sm hover:bg-neutral-100"
+                  className="block w-full px-3 py-2 text-left text-sm hover:bg-[#efe9e0]"
                 >
                   {s.displayName}
                 </button>
@@ -123,9 +123,9 @@ export function AddressMapPicker({
 
       <div
         ref={mapRef}
-        className="mt-3 h-64 w-full rounded-md border border-neutral-200"
+        className="mt-3 h-64 w-full rounded-md border border-[#e4e0d9]"
       />
-      <p className="mt-1 text-xs text-neutral-500">
+      <p className="mt-1 text-xs text-[#5b6472]">
         Arraste o pino para ajustar a posição exata.
       </p>
 

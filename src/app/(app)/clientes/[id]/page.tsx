@@ -24,16 +24,38 @@ interface CuradoriaComImovel {
   score: number | null;
   status_curadoria: ImovelComCuradoria["status_curadoria"];
   comissao_combinada: boolean;
+  selecionado_apresentacao: boolean | null;
   imovel: ImovelRow;
 }
 
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export default async function ClienteDetalhePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ oportunidade?: string }>;
 }) {
   const { id } = await params;
+  const { oportunidade: oportunidadeParam } = await searchParams;
   const supabase = await createClient();
+
+  // Só volta para a oportunidade se ela for deste cliente (e visível pela RLS).
+  let voltarHref = "/clientes";
+  let voltarLabel = "← Voltar";
+  if (oportunidadeParam && UUID.test(oportunidadeParam)) {
+    const { data: origem } = await supabase
+      .from("oportunidade")
+      .select("id")
+      .eq("id", oportunidadeParam)
+      .eq("cliente_id", id)
+      .maybeSingle();
+    if (origem) {
+      voltarHref = `/crm/${origem.id}`;
+      voltarLabel = "← Voltar para oportunidade";
+    }
+  }
 
   const { data: cliente } = await supabase
     .from("cliente")
@@ -61,7 +83,9 @@ export default async function ClienteDetalhePage({
     if (buscaIds.length > 0) {
       const { data } = await supabase
         .from("imovel_encontrado")
-        .select("id, score, status_curadoria, comissao_combinada, imovel(*)")
+        .select(
+          "id, score, status_curadoria, comissao_combinada, selecionado_apresentacao, imovel(*)"
+        )
         .in("busca_id", buscaIds)
         .order("id", { ascending: false })
         .returns<CuradoriaComImovel[]>();
@@ -71,6 +95,7 @@ export default async function ClienteDetalhePage({
         curadoria_score: c.score,
         status_curadoria: c.status_curadoria,
         comissao_combinada: c.comissao_combinada,
+        selecionado_apresentacao: Boolean(c.selecionado_apresentacao),
       }));
     }
   }
@@ -78,16 +103,16 @@ export default async function ClienteDetalhePage({
   return (
     <div>
       <Link
-        href="/clientes"
-        className="text-sm text-neutral-500 hover:underline"
+        href={voltarHref}
+        className="text-sm text-[#5b6472] hover:underline"
       >
-        ← Voltar
+        {voltarLabel}
       </Link>
 
       <div className="mt-2 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold">{cliente.nome}</h1>
-          <p className="mt-1 text-sm text-neutral-500">
+          <p className="mt-1 text-sm text-[#5b6472]">
             {[cliente.telefone, cliente.email, cliente.origem_lead]
               .filter(Boolean)
               .join(" · ") || "Sem dados de contato adicionais"}
@@ -100,23 +125,37 @@ export default async function ClienteDetalhePage({
         </span>
       </div>
 
-      <div className="mt-4">
+      <div className="mt-4 flex flex-wrap items-center gap-3">
         <StatusSelect clienteId={cliente.id} status={cliente.status} />
+        <Link
+          href={`/crm/novo?cliente=${cliente.id}`}
+          className="rounded-md border border-[#e4e0d9] px-3 py-1.5 text-sm hover:bg-[#faf8f5]"
+        >
+          Nova oportunidade
+        </Link>
+        <Link
+          href={`/clientes/${cliente.id}/apresentacoes`}
+          className="rounded-md border border-[#e4e0d9] px-3 py-1.5 text-sm hover:bg-[#faf8f5]"
+        >
+          Apresentações
+          {imoveis.some((i) => i.selecionado_apresentacao) &&
+            ` (${imoveis.filter((i) => i.selecionado_apresentacao).length} selecionados)`}
+        </Link>
       </div>
 
-      <section className="mt-8 rounded-lg border border-neutral-200 bg-white p-6">
+      <section className="mt-8 rounded-lg border border-[#e4e0d9] bg-white p-6">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold">Perfil</h2>
           <Link
             href={`/clientes/${cliente.id}/entrevista`}
-            className="rounded-md bg-neutral-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-neutral-800"
+            className="rounded-md bg-[#d6b072] px-3 py-1.5 text-sm font-medium text-[#0b1f34] hover:brightness-105"
           >
             {perfil ? "Editar entrevista" : "Iniciar entrevista"}
           </Link>
         </div>
 
         {!perfil && (
-          <p className="mt-4 text-sm text-neutral-500">
+          <p className="mt-4 text-sm text-[#5b6472]">
             Entrevista ainda não realizada.
           </p>
         )}
@@ -138,7 +177,7 @@ export default async function ClienteDetalhePage({
               value={formatBool(perfil.credito_aprovado)}
             />
             <div className="col-span-2 sm:col-span-3">
-              <dt className="text-neutral-500">Regiões aceitas</dt>
+              <dt className="text-[#5b6472]">Regiões aceitas</dt>
               <dd className="mt-0.5 font-medium">
                 {perfil.regioes_aceitas?.length
                   ? perfil.regioes_aceitas.map(formatRegiao).join(" · ")
@@ -146,7 +185,7 @@ export default async function ClienteDetalhePage({
               </dd>
             </div>
             <div className="col-span-2 sm:col-span-3">
-              <dt className="text-neutral-500">Critérios priorizados</dt>
+              <dt className="text-[#5b6472]">Critérios priorizados</dt>
               <dd className="mt-0.5 font-medium">
                 {perfil.criterios_priorizados?.length
                   ? perfil.criterios_priorizados
@@ -157,19 +196,19 @@ export default async function ClienteDetalhePage({
             </div>
             {perfil.motivacao && (
               <div className="col-span-2 sm:col-span-3">
-                <dt className="text-neutral-500">Motivação</dt>
+                <dt className="text-[#5b6472]">Motivação</dt>
                 <dd className="mt-0.5">{perfil.motivacao}</dd>
               </div>
             )}
             {perfil.aspiracoes && (
               <div className="col-span-2 sm:col-span-3">
-                <dt className="text-neutral-500">Aspirações</dt>
+                <dt className="text-[#5b6472]">Aspirações</dt>
                 <dd className="mt-0.5">{perfil.aspiracoes}</dd>
               </div>
             )}
             {perfil.restricoes && (
               <div className="col-span-2 sm:col-span-3">
-                <dt className="text-neutral-500">Restrições</dt>
+                <dt className="text-[#5b6472]">Restrições</dt>
                 <dd className="mt-0.5">{perfil.restricoes}</dd>
               </div>
             )}
@@ -177,7 +216,10 @@ export default async function ClienteDetalhePage({
         )}
       </section>
 
-      <section className="mt-6 rounded-lg border border-neutral-200 bg-white p-6">
+      <section
+        id="imoveis"
+        className="mt-6 scroll-mt-6 rounded-lg border border-[#e4e0d9] bg-white p-6"
+      >
         <div className="flex items-center justify-between gap-2">
           <h2 className="text-lg font-semibold">Imóveis</h2>
           <div className="flex gap-2">
@@ -186,14 +228,14 @@ export default async function ClienteDetalhePage({
                 href={buildGoogleSearchUrl(perfil)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm hover:bg-neutral-100"
+                className="rounded-md border border-[#e4e0d9] px-3 py-1.5 text-sm hover:bg-[#efe9e0]"
               >
-                Buscar no Google
+                Buscar imóvel
               </a>
             )}
             <Link
               href={`/clientes/${cliente.id}/imoveis/novo`}
-              className="rounded-md bg-neutral-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-neutral-800"
+              className="rounded-md bg-[#d6b072] px-3 py-1.5 text-sm font-medium text-[#0b1f34] hover:brightness-105"
             >
               Adicionar imóvel
             </Link>
@@ -201,13 +243,13 @@ export default async function ClienteDetalhePage({
         </div>
 
         {!perfil && (
-          <p className="mt-4 text-sm text-neutral-500">
+          <p className="mt-4 text-sm text-[#5b6472]">
             Finalize a entrevista antes de adicionar imóveis.
           </p>
         )}
 
         {perfil && imoveis.length === 0 && (
-          <p className="mt-4 text-sm text-neutral-500">
+          <p className="mt-4 text-sm text-[#5b6472]">
             Nenhum imóvel adicionado ainda.
           </p>
         )}
@@ -237,7 +279,7 @@ function Field({
 }) {
   return (
     <div>
-      <dt className="text-neutral-500">{label}</dt>
+      <dt className="text-[#5b6472]">{label}</dt>
       <dd className="mt-0.5 font-medium">
         {value === null || value === undefined || value === "" ? "—" : value}
       </dd>

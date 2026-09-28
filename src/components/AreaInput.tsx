@@ -37,7 +37,7 @@ export function AreaInput({
         placeholder="0"
         className={`${className ?? ""} pr-9`}
       />
-      <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-neutral-500">
+      <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-[#5b6472]">
         m²
       </span>
       <input

@@ -1,10 +1,15 @@
 import { createClient } from "@/lib/supabase/server";
 import { CatalogImovelCard } from "@/components/CatalogImovelCard";
+import {
+  STATUS_CONSTRUCAO_LABELS,
+  STATUS_CONSTRUCAO_VALUES,
+  parseStatusConstrucao,
+} from "@/lib/labels";
 import type { ImovelRow } from "@/lib/database.types";
 
 const inputClass =
-  "mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-500 focus:outline-none";
-const labelClass = "block text-xs font-medium text-neutral-500";
+  "mt-1 w-full rounded-md border border-[#e4e0d9] px-3 py-2 text-sm focus:border-[#b8925a] focus:outline-none";
+const labelClass = "block text-xs font-medium text-[#5b6472]";
 
 export default async function CatalogoImoveisPage({
   searchParams,
@@ -13,10 +18,12 @@ export default async function CatalogoImoveisPage({
     regiao?: string;
     preco_min?: string;
     preco_max?: string;
+    situacao?: string;
     error?: string;
   }>;
 }) {
-  const { regiao, preco_min, preco_max, error } = await searchParams;
+  const { regiao, preco_min, preco_max, situacao, error } = await searchParams;
+  const statusConstrucao = parseStatusConstrucao(situacao ?? null);
   const supabase = await createClient();
 
   let query = supabase
@@ -28,6 +35,7 @@ export default async function CatalogoImoveisPage({
   if (regiao) query = query.ilike("endereco_texto", `%${regiao}%`);
   if (preco_min) query = query.gte("preco", Number(preco_min));
   if (preco_max) query = query.lte("preco", Number(preco_max));
+  if (statusConstrucao) query = query.eq("status_construcao", statusConstrucao);
 
   const { data: imoveis } = await query.returns<ImovelRow[]>();
 
@@ -39,14 +47,14 @@ export default async function CatalogoImoveisPage({
   return (
     <div>
       <h1 className="text-2xl font-semibold">Catálogo de imóveis</h1>
-      <p className="mt-1 text-sm text-neutral-500">
+      <p className="mt-1 text-sm text-[#5b6472]">
         Todos os imóveis já salvos, de qualquer cliente. Reaproveite um imóvel
         já visitado associando-o a um novo cliente.
       </p>
 
       <form
         method="get"
-        className="mt-6 grid grid-cols-1 gap-4 rounded-lg border border-neutral-200 bg-white p-4 sm:grid-cols-4"
+        className="mt-6 grid grid-cols-1 gap-4 rounded-lg border border-[#e4e0d9] bg-white p-4 sm:grid-cols-5"
       >
         <div>
           <label className={labelClass}>Região / endereço</label>
@@ -77,10 +85,25 @@ export default async function CatalogoImoveisPage({
             className={inputClass}
           />
         </div>
+        <div>
+          <label className={labelClass}>Situação</label>
+          <select
+            name="situacao"
+            defaultValue={statusConstrucao ?? ""}
+            className={inputClass}
+          >
+            <option value="">Todas</option>
+            {STATUS_CONSTRUCAO_VALUES.map((s) => (
+              <option key={s} value={s}>
+                {STATUS_CONSTRUCAO_LABELS[s]}
+              </option>
+            ))}
+          </select>
+        </div>
         <div className="flex items-end">
           <button
             type="submit"
-            className="w-full rounded-md bg-neutral-900 px-3 py-2 text-sm font-medium text-white hover:bg-neutral-800"
+            className="w-full rounded-md bg-[#d6b072] px-3 py-2 text-sm font-medium text-[#0b1f34] hover:brightness-105"
           >
             Filtrar
           </button>
@@ -95,7 +118,7 @@ export default async function CatalogoImoveisPage({
 
       <div className="mt-6 space-y-3">
         {(!imoveis || imoveis.length === 0) && (
-          <p className="text-sm text-neutral-500">
+          <p className="text-sm text-[#5b6472]">
             Nenhum imóvel encontrado com esses filtros.
           </p>
         )}

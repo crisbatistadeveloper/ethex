@@ -38,14 +38,14 @@ export default async function EntrevistaPage({
     <div className="max-w-3xl">
       <Link
         href={`/clientes/${id}`}
-        className="text-sm text-neutral-500 hover:underline"
+        className="text-sm text-[#5b6472] hover:underline"
       >
         ← Voltar
       </Link>
       <h1 className="mt-2 text-2xl font-semibold">
         Entrevista — {cliente.nome}
       </h1>
-      <p className="mt-1 text-sm text-neutral-500">
+      <p className="mt-1 text-sm text-[#5b6472]">
         Conduzida pelo consultor. Os campos variam conforme a finalidade
         selecionada.
       </p>

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { signIn } from "./actions";
 
 export default async function LoginPage({
@@ -8,10 +9,22 @@ export default async function LoginPage({
   const { error } = await searchParams;
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-neutral-50 px-4">
-      <div className="w-full max-w-sm rounded-lg border border-neutral-200 bg-white p-8 shadow-sm">
-        <h1 className="text-xl font-semibold text-neutral-900">Ethex</h1>
-        <p className="mt-1 text-sm text-neutral-500">
+    <div className="flex min-h-screen items-center justify-center bg-[#faf8f5] px-4">
+      <div className="w-full max-w-sm rounded-lg border border-[#e4e0d9] bg-white p-8 shadow-sm">
+        <div className="flex items-center gap-2">
+          <Image
+            src="/brand/icon-mark.png"
+            alt=""
+            width={32}
+            height={32}
+            className="h-8 w-8"
+            unoptimized
+          />
+          <h1 className="text-xl font-extrabold tracking-tight text-[#0b1f34]">
+            Ethex
+          </h1>
+        </div>
+        <p className="mt-1 text-sm text-[#5b6472]">
           Acesso restrito ao consultor.
         </p>
 
@@ -19,7 +32,7 @@ export default async function LoginPage({
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-neutral-700"
+              className="block text-sm font-medium text-[#0b1f34]"
             >
               Email
             </label>
@@ -29,14 +42,14 @@ export default async function LoginPage({
               type="email"
               required
               autoComplete="email"
-              className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-500 focus:outline-none"
+              className="mt-1 w-full rounded-md border border-[#e4e0d9] px-3 py-2 text-sm focus:border-[#b8925a] focus:outline-none"
             />
           </div>
 
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-neutral-700"
+              className="block text-sm font-medium text-[#0b1f34]"
             >
               Senha
             </label>
@@ -46,7 +59,7 @@ export default async function LoginPage({
               type="password"
               required
               autoComplete="current-password"
-              className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-500 focus:outline-none"
+              className="mt-1 w-full rounded-md border border-[#e4e0d9] px-3 py-2 text-sm focus:border-[#b8925a] focus:outline-none"
             />
           </div>
 
@@ -58,7 +71,7 @@ export default async function LoginPage({
 
           <button
             type="submit"
-            className="w-full rounded-md bg-neutral-900 px-3 py-2 text-sm font-medium text-white hover:bg-neutral-800"
+            className="w-full rounded-md bg-[#d6b072] px-3 py-2 text-sm font-semibold text-[#0b1f34] hover:brightness-105"
           >
             Entrar
           </button>

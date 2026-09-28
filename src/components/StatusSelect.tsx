@@ -23,7 +23,7 @@ export function StatusSelect({
       <select
         name="status"
         defaultValue={status}
-        className="rounded-md border border-neutral-300 px-2 py-1.5 text-sm focus:border-neutral-500 focus:outline-none"
+        className="rounded-md border border-[#e4e0d9] px-2 py-1.5 text-sm focus:border-[#b8925a] focus:outline-none"
       >
         {STATUS_ORDER.map((value) => (
           <option key={value} value={value}>
@@ -33,7 +33,7 @@ export function StatusSelect({
       </select>
       <button
         type="submit"
-        className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm hover:bg-neutral-100"
+        className="rounded-md border border-[#e4e0d9] px-3 py-1.5 text-sm hover:bg-[#efe9e0]"
       >
         Atualizar
       </button>

@@ -21,19 +21,19 @@ export default async function NovoClientePage({
     <div className="max-w-lg">
       <Link
         href="/clientes"
-        className="text-sm text-neutral-500 hover:underline"
+        className="text-sm text-[#5b6472] hover:underline"
       >
         ← Voltar
       </Link>
       <h1 className="mt-2 text-2xl font-semibold">Novo cliente</h1>
-      <p className="mt-1 text-sm text-neutral-500">
+      <p className="mt-1 text-sm text-[#5b6472]">
         Cadastro rápido. Depois, inicie a entrevista completa para preencher o
         perfil.
       </p>
 
       <form
         action={createCliente}
-        className="mt-6 space-y-4 rounded-lg border border-neutral-200 bg-white p-6"
+        className="mt-6 space-y-4 rounded-lg border border-[#e4e0d9] bg-white p-6"
       >
         <div>
           <label htmlFor="nome" className="block text-sm font-medium">
@@ -43,7 +43,7 @@ export default async function NovoClientePage({
             id="nome"
             name="nome"
             required
-            className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-500 focus:outline-none"
+            className="mt-1 w-full rounded-md border border-[#e4e0d9] px-3 py-2 text-sm focus:border-[#b8925a] focus:outline-none"
           />
         </div>
 
@@ -54,7 +54,7 @@ export default async function NovoClientePage({
           <input
             id="telefone"
             name="telefone"
-            className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-500 focus:outline-none"
+            className="mt-1 w-full rounded-md border border-[#e4e0d9] px-3 py-2 text-sm focus:border-[#b8925a] focus:outline-none"
           />
         </div>
 
@@ -66,7 +66,7 @@ export default async function NovoClientePage({
             id="email"
             name="email"
             type="email"
-            className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-500 focus:outline-none"
+            className="mt-1 w-full rounded-md border border-[#e4e0d9] px-3 py-2 text-sm focus:border-[#b8925a] focus:outline-none"
           />
         </div>
 
@@ -78,7 +78,7 @@ export default async function NovoClientePage({
             id="origem_lead"
             name="origem_lead"
             list="origens-sugeridas"
-            className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-neutral-500 focus:outline-none"
+            className="mt-1 w-full rounded-md border border-[#e4e0d9] px-3 py-2 text-sm focus:border-[#b8925a] focus:outline-none"
           />
           <datalist id="origens-sugeridas">
             {ORIGENS_SUGERIDAS.map((origem) => (
@@ -95,7 +95,7 @@ export default async function NovoClientePage({
 
         <button
           type="submit"
-          className="w-full rounded-md bg-neutral-900 px-3 py-2 text-sm font-medium text-white hover:bg-neutral-800"
+          className="w-full rounded-md bg-[#d6b072] px-3 py-2 text-sm font-medium text-[#0b1f34] hover:brightness-105"
         >
           Criar cliente
         </button>
