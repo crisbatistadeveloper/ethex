@@ -75,7 +75,7 @@ export function ImovelCard({
         )}
       </div>
 
-      <div className="flex-1">
+      <div className="min-w-0 flex-1">
         <div className="flex items-start justify-between gap-2">
           <div>
             <Link

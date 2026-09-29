@@ -33,7 +33,7 @@ export function CatalogImovelCard({
         )}
       </Link>
 
-      <div className="flex-1">
+      <div className="min-w-0 flex-1">
         <Link
           href={`/imoveis/${imovel.id}`}
           className="font-medium text-[#0b1f34] hover:underline"
