@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getUsuarioAtual } from "@/lib/auth";
 import { signOut } from "./actions";
+import { MobileNav } from "./MobileNav";
 
 const NAV_GRUPOS: { label: string; href: string }[][] = [
   [
@@ -29,8 +30,8 @@ export default async function AppLayout({
 
   return (
     <div className="min-h-screen">
-      <header className="border-b border-[#e4e0d9] bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-3">
+      <header className="relative border-b border-[#e4e0d9] bg-white">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-4 py-3 sm:px-6">
           <div className="flex items-center gap-6">
             <Link href="/clientes" className="flex shrink-0 items-center gap-2">
               <Image src="/brand/icon-mark.png" alt="" width={28} height={28} className="h-7 w-7" unoptimized />
@@ -38,7 +39,7 @@ export default async function AppLayout({
                 Ethex
               </span>
             </Link>
-            <nav className="flex flex-wrap items-center gap-x-5 gap-y-1">
+            <nav className="hidden flex-wrap items-center gap-x-5 gap-y-1 sm:flex">
               {NAV_GRUPOS.map((grupo, i) => (
                 <span key={i} className="flex items-center gap-x-5">
                   {i > 0 && (
@@ -57,7 +58,7 @@ export default async function AppLayout({
               ))}
             </nav>
           </div>
-          <div className="flex shrink-0 items-center gap-4 text-sm text-[#5b6472]">
+          <div className="hidden shrink-0 items-center gap-4 text-sm text-[#5b6472] sm:flex">
             {usuario && (
               <span>
                 {usuario.nome}
@@ -77,6 +78,7 @@ export default async function AppLayout({
               </button>
             </form>
           </div>
+          <MobileNav grupos={NAV_GRUPOS} usuario={usuario} onSignOut={signOut} />
         </div>
       </header>
       <main className="mx-auto max-w-6xl px-6 py-8">{children}</main>
