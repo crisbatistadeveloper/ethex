@@ -85,11 +85,11 @@ export function CatalogImovelCard({
           </p>
         )}
 
-        <form action={acao} className="mt-3 flex items-center gap-2">
+        <form action={acao} className="mt-3 flex flex-wrap items-center gap-2">
           <select
             name="clienteId"
             required
-            className="rounded-md border border-[#e4e0d9] px-2 py-1.5 text-xs focus:border-[#b8925a] focus:outline-none"
+            className="min-w-0 flex-1 rounded-md border border-[#e4e0d9] px-2 py-1.5 text-xs focus:border-[#b8925a] focus:outline-none"
           >
             <option value="">Associar a um cliente...</option>
             {clientes.map((c) => (
@@ -100,7 +100,7 @@ export function CatalogImovelCard({
           </select>
           <button
             type="submit"
-            className="rounded-md border border-[#e4e0d9] px-2.5 py-1 text-xs hover:bg-[#efe9e0]"
+            className="shrink-0 rounded-md border border-[#e4e0d9] px-2.5 py-1 text-xs hover:bg-[#efe9e0]"
           >
             Associar
           </button>
