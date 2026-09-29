@@ -91,22 +91,6 @@ function IconParceiros({ className }: { className?: string }) {
   );
 }
 
-function IconMenu({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
-      <path d="M4 7h16M4 12h16M4 17h16" />
-    </svg>
-  );
-}
-
-function IconClose({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
-      <path d="M6 6l12 12M18 6L6 18" />
-    </svg>
-  );
-}
-
 function IconCollapse({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round">
@@ -253,12 +237,12 @@ export function Sidebar({
   onSignOut: () => void;
 }) {
   const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState(() =>
-    typeof window === "undefined"
-      ? false
-      : window.localStorage.getItem(COLLAPSE_KEY) === "1"
-  );
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(() => {
+    if (typeof window === "undefined") return false;
+    // No mobile a sidebar sempre começa só com ícones; o usuário expande manualmente.
+    if (window.matchMedia("(max-width: 767px)").matches) return true;
+    return window.localStorage.getItem(COLLAPSE_KEY) === "1";
+  });
 
   function toggleCollapsed() {
     setCollapsed((prev) => {
@@ -268,70 +252,34 @@ export function Sidebar({
     });
   }
 
+  function collapseOnMobile() {
+    if (window.matchMedia("(max-width: 767px)").matches) {
+      setCollapsed(true);
+      window.localStorage.setItem(COLLAPSE_KEY, "1");
+    }
+  }
+
   return (
     <>
-      {/* Barra superior mobile */}
-      <div className="sticky top-0 z-30 flex items-center justify-between border-b border-[#e4e0d9] bg-white px-4 py-3 md:hidden">
-        <Link href="/clientes" className="flex items-center gap-2">
-          <Image src="/brand/icon-mark.png" alt="" width={28} height={28} className="h-7 w-7" unoptimized />
-          <span className="text-lg font-extrabold tracking-tight text-[#0b1f34]">Ethex</span>
-        </Link>
-        <button
-          type="button"
-          aria-label="Abrir menu"
-          onClick={() => setMobileOpen(true)}
-          className="flex h-9 w-9 items-center justify-center rounded-md border border-[#e4e0d9] text-[#0b1f34]"
-        >
-          <IconMenu className="h-5 w-5" />
-        </button>
-      </div>
-
-      {/* Drawer mobile */}
-      {mobileOpen && (
-        <div className="fixed inset-0 z-50 md:hidden">
-          <div
-            className="absolute inset-0 bg-black/40"
-            onClick={() => setMobileOpen(false)}
-          />
-          <aside className="relative z-10 flex h-full w-72 max-w-[80vw] flex-col bg-[#0b1f34]">
-            <div className="flex items-center justify-between px-4 py-3">
-              <Link
-                href="/clientes"
-                onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-2"
-              >
-                <div className="rounded-lg bg-white/5 p-1">
-                  <Image src="/brand/icon-mark.png" alt="" width={24} height={24} className="h-6 w-6" unoptimized />
-                </div>
-                <span className="text-lg font-extrabold tracking-tight text-white">Ethex</span>
-              </Link>
-              <button
-                type="button"
-                aria-label="Fechar menu"
-                onClick={() => setMobileOpen(false)}
-                className="flex h-9 w-9 items-center justify-center rounded-md text-[#aab4c4] hover:bg-white/5 hover:text-white"
-              >
-                <IconClose className="h-5 w-5" />
-              </button>
-            </div>
-            <SidebarNav
-              pathname={pathname}
-              collapsed={false}
-              onNavigate={() => setMobileOpen(false)}
-            />
-            <SidebarFooter usuario={usuario} collapsed={false} onSignOut={onSignOut} />
-          </aside>
-        </div>
+      {/* Fundo escurecido: só no mobile, quando a sidebar está expandida sobre o conteúdo */}
+      {!collapsed && (
+        <div
+          className="fixed inset-0 z-30 bg-black/40 md:hidden"
+          onClick={collapseOnMobile}
+        />
       )}
 
-      {/* Sidebar desktop */}
       <aside
-        className={`sticky top-0 hidden h-screen shrink-0 flex-col bg-[#0b1f34] transition-[width] duration-200 md:flex ${
+        className={`fixed inset-y-0 left-0 z-40 flex h-screen shrink-0 flex-col bg-[#0b1f34] transition-[width] duration-200 md:sticky md:inset-auto md:top-0 ${
           collapsed ? "w-16" : "w-60"
         }`}
       >
         <div className={`flex items-center gap-2 px-3 py-4 ${collapsed ? "justify-center" : "justify-between"}`}>
-          <Link href="/clientes" className="flex min-w-0 items-center gap-2">
+          <Link
+            href="/clientes"
+            onClick={collapseOnMobile}
+            className="flex min-w-0 items-center gap-2"
+          >
             <div className="shrink-0 rounded-lg bg-white/5 p-1">
               <Image src="/brand/icon-mark.png" alt="" width={24} height={24} className="h-6 w-6" unoptimized />
             </div>
@@ -353,7 +301,11 @@ export function Sidebar({
           )}
         </div>
 
-        <SidebarNav pathname={pathname} collapsed={collapsed} />
+        <SidebarNav
+          pathname={pathname}
+          collapsed={collapsed}
+          onNavigate={collapseOnMobile}
+        />
 
         {collapsed && (
           <button

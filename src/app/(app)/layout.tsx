@@ -10,9 +10,9 @@ export default async function AppLayout({
   const usuario = await getUsuarioAtual();
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#faf8f5] md:flex-row">
+    <div className="flex min-h-screen bg-[#faf8f5]">
       <Sidebar usuario={usuario} onSignOut={signOut} />
-      <main className="min-w-0 flex-1 px-4 py-6 sm:px-6 sm:py-8">
+      <main className="ml-16 min-w-0 flex-1 px-4 py-6 sm:px-6 sm:py-8 md:ml-0">
         <div className="mx-auto max-w-6xl">{children}</div>
       </main>
     </div>
