@@ -1,25 +1,6 @@
-import Image from "next/image";
-import Link from "next/link";
 import { getUsuarioAtual } from "@/lib/auth";
 import { signOut } from "./actions";
-import { MobileNav } from "./MobileNav";
-
-const NAV_GRUPOS: { label: string; href: string }[][] = [
-  [
-    { label: "Leads", href: "/leads" },
-    { label: "CRM", href: "/crm" },
-  ],
-  [
-    { label: "Visitas", href: "/visitas" },
-    { label: "Negociações", href: "/negociacoes" },
-    { label: "Due diligence", href: "/due-diligence" },
-  ],
-  [
-    { label: "Clientes", href: "/clientes" },
-    { label: "Catálogo", href: "/imoveis" },
-    { label: "Parceiros", href: "/parceiros" },
-  ],
-];
+import { Sidebar } from "./Sidebar";
 
 export default async function AppLayout({
   children,
@@ -29,59 +10,11 @@ export default async function AppLayout({
   const usuario = await getUsuarioAtual();
 
   return (
-    <div className="min-h-screen">
-      <header className="relative border-b border-[#e4e0d9] bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-4 py-3 sm:px-6">
-          <div className="flex items-center gap-6">
-            <Link href="/clientes" className="flex shrink-0 items-center gap-2">
-              <Image src="/brand/icon-mark.png" alt="" width={28} height={28} className="h-7 w-7" unoptimized />
-              <span className="text-lg font-extrabold tracking-tight text-[#0b1f34]">
-                Ethex
-              </span>
-            </Link>
-            <nav className="hidden flex-wrap items-center gap-x-5 gap-y-1 sm:flex">
-              {NAV_GRUPOS.map((grupo, i) => (
-                <span key={i} className="flex items-center gap-x-5">
-                  {i > 0 && (
-                    <span className="hidden h-4 w-px bg-[#e4e0d9] sm:block" />
-                  )}
-                  {grupo.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className="text-sm text-[#5b6472] transition-colors hover:text-[#0b1f34]"
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
-                </span>
-              ))}
-            </nav>
-          </div>
-          <div className="hidden shrink-0 items-center gap-4 text-sm text-[#5b6472] sm:flex">
-            {usuario && (
-              <span>
-                {usuario.nome}
-                {usuario.papel === "admin" && (
-                  <span className="ml-1.5 rounded-full border border-[#d6b072] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[#b8925a]">
-                    admin
-                  </span>
-                )}
-              </span>
-            )}
-            <form action={signOut}>
-              <button
-                type="submit"
-                className="rounded-md border border-[#e4e0d9] px-3 py-1.5 text-[#0b1f34] hover:bg-[#faf8f5]"
-              >
-                Sair
-              </button>
-            </form>
-          </div>
-          <MobileNav grupos={NAV_GRUPOS} usuario={usuario} onSignOut={signOut} />
-        </div>
-      </header>
-      <main className="mx-auto max-w-6xl px-6 py-8">{children}</main>
+    <div className="flex min-h-screen flex-col bg-[#faf8f5] md:flex-row">
+      <Sidebar usuario={usuario} onSignOut={signOut} />
+      <main className="min-w-0 flex-1 px-4 py-6 sm:px-6 sm:py-8">
+        <div className="mx-auto max-w-6xl">{children}</div>
+      </main>
     </div>
   );
 }
