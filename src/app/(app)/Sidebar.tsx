@@ -270,11 +270,9 @@ export function Sidebar({
       )}
 
       <aside
-        className={`z-40 flex shrink-0 flex-col bg-[#0b1f34] transition-[width] duration-200 md:sticky md:inset-auto md:top-0 md:h-dvh ${
-          collapsed
-            ? "sticky top-0 min-h-dvh self-start"
-            : "fixed inset-y-0 left-0 h-dvh"
-        } ${collapsed ? "w-16" : "w-60"}`}
+        className={`fixed inset-y-0 left-0 z-40 flex h-dvh shrink-0 flex-col bg-[#0b1f34] transition-[width] duration-200 md:sticky md:inset-auto md:top-0 ${
+          collapsed ? "w-16" : "w-60"
+        }`}
       >
         <div className={`flex items-center gap-2 px-3 py-4 ${collapsed ? "justify-center" : "justify-between"}`}>
           <Link
