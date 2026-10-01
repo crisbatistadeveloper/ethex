@@ -8,13 +8,13 @@ Referência local, não versionada. As variáveis reais ficam em `.env.local`
 
 - Projeto: `cris.4mind@gmail.com's Project`
 - URL: `https://dpfiugqvozouoyfcsjbj.supabase.co`
-- Migrações aplicadas: `0001` a `0022` (conferido com `supabase/tests/diagnostico_migrations.sql`)
+- Migrações aplicadas: `0001` a `0023`
 
 ## Dev/staging (`dev` → só local)
 
 - Projeto: `ethex-dev`
 - URL: `https://eljinryrsmqcsjwrucyi.supabase.co`
-- Migrações aplicadas: `0001` a `0022` (conferido com `supabase/tests/diagnostico_migrations.sql`)
+- Migrações aplicadas: `0001` a `0023`
 
 ## Fluxo
 
@@ -143,3 +143,10 @@ Coluna: `imovel_encontrado.parceiro_id`.
 - `validar_fechamento()` recriada: ganho aceita DD com status aprovada/aprovada com ressalvas **ou** resultado (`recomendacao`) Prosseguir / Prosseguir com ressalvas; status Reprovada continua bloqueando
 - Mesma regra da tela: `situacaoDueDiligenceFechamento` (`src/lib/due-diligence-final.ts`)
 - Sem mudança de dados/estrutura/RLS. **Aplicada no ethex-dev**
+
+## Exclusão de cliente/lead (`0023_cliente_lead_exclusao.sql`)
+
+- `lead.cliente_id` não tinha `on delete` (ficava `no action`/restrict), então excluir um cliente já convertido de um lead falhava com violação de FK
+- Troca a constraint para `on delete set null`: o lead sobrevive como histórico de captação, só perde o vínculo
+- Testado em transação (insere cliente+lead vinculados, exclui o cliente, confirma `lead.cliente_id = null`, desfaz) antes de aplicar
+- Sem mudança de dados existentes. **Aplicada em produção e no ethex-dev**
