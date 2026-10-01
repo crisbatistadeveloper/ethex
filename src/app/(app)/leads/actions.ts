@@ -150,3 +150,9 @@ export async function descartarLead(leadId: string) {
   await supabase.from("lead").update({ status: "descartado" }).eq("id", leadId);
   revalidatePath("/leads");
 }
+
+export async function deleteLead(leadId: string) {
+  const supabase = await createClient();
+  await supabase.from("lead").delete().eq("id", leadId);
+  revalidatePath("/leads");
+}

@@ -6,7 +6,8 @@ import {
   formatFaixaValores,
   origemLeadLabel,
 } from "@/lib/labels";
-import { assignLead, convertLead, descartarLead } from "./actions";
+import { assignLead, convertLead, deleteLead, descartarLead } from "./actions";
+import { ConfirmSubmitButton } from "@/components/ConfirmSubmitButton";
 import type { LeadRow } from "@/lib/database.types";
 
 const STATUS_LABELS: Record<LeadRow["status"], string> = {
@@ -166,6 +167,16 @@ export default async function LeadsPage({
                 Ver cliente →
               </Link>
             )}
+
+            <div className="mt-2 flex justify-end">
+              <ConfirmSubmitButton
+                action={deleteLead.bind(null, lead.id)}
+                confirmMessage={`Excluir o lead "${lead.nome || lead.email}"? Essa ação não pode ser desfeita.`}
+                className="text-xs text-red-700 hover:underline"
+              >
+                Excluir lead
+              </ConfirmSubmitButton>
+            </div>
           </div>
         ))}
       </div>

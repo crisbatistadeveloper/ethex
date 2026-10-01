@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { deleteCliente } from "@/app/(app)/clientes/actions";
 import { StatusSelect } from "@/components/StatusSelect";
+import { ConfirmSubmitButton } from "@/components/ConfirmSubmitButton";
 import {
   FINALIDADE_LABELS,
   STATUS_COLORS,
@@ -141,6 +143,13 @@ export default async function ClienteDetalhePage({
           {imoveis.some((i) => i.selecionado_apresentacao) &&
             ` (${imoveis.filter((i) => i.selecionado_apresentacao).length} selecionados)`}
         </Link>
+        <ConfirmSubmitButton
+          action={deleteCliente.bind(null, cliente.id)}
+          confirmMessage={`Excluir "${cliente.nome}"? Isso apaga permanentemente o perfil, buscas, imóveis da busca, oportunidades, visitas, negociações, due diligence e apresentações deste cliente. Não pode ser desfeito.`}
+          className="ml-auto rounded-md border border-red-300 px-3 py-1.5 text-sm font-medium text-red-700 hover:bg-red-50"
+        >
+          Excluir cliente
+        </ConfirmSubmitButton>
       </div>
 
       <section className="mt-8 rounded-lg border border-[#e4e0d9] bg-white p-6">

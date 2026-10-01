@@ -91,3 +91,19 @@ export async function updateClienteStatus(
   revalidatePath(`/clientes/${clienteId}`);
   revalidatePath("/clientes");
 }
+
+export async function deleteCliente(clienteId: string) {
+  const supabase = await createClient();
+  const { error } = await supabase.from("cliente").delete().eq("id", clienteId);
+
+  if (error) {
+    redirect(
+      `/clientes/${clienteId}?error=${encodeURIComponent(error.message)}`
+    );
+  }
+
+  revalidatePath("/clientes");
+  revalidatePath("/crm");
+  revalidatePath("/leads");
+  redirect("/clientes");
+}
