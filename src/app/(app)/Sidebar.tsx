@@ -202,7 +202,7 @@ function SidebarFooter({
   onSignOut: () => void;
 }) {
   return (
-    <div className="border-t border-white/10 p-2">
+    <div className="border-t border-white/10 p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
       {!collapsed && usuario && (
         <div className="px-1 pb-2 text-xs text-[#aab4c4]">
           <span className="block truncate text-[#e7e2d8]">{usuario.nome}</span>
