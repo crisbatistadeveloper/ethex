@@ -1,9 +1,13 @@
 import Link from "next/link";
-import { updateStatusCuradoria } from "@/app/(app)/clientes/[id]/imoveis/actions";
+import {
+  removeImovelDaCuradoria,
+  updateStatusCuradoria,
+} from "@/app/(app)/clientes/[id]/imoveis/actions";
 import { toggleSelecaoApresentacao } from "@/app/(app)/clientes/[id]/apresentacoes/actions";
 import { registrarDecisaoImovel } from "@/app/(app)/negociacoes/actions";
 import { StatusConstrucaoBadge } from "@/components/StatusConstrucao";
 import { DiferenciaisTags } from "@/components/CaracteristicasImovel";
+import { ConfirmSubmitButton } from "@/components/ConfirmSubmitButton";
 import { resumoQuantitativo } from "@/lib/imovel-caracteristicas";
 import { tituloImovel } from "@/lib/imovel-titulo";
 import type { ImovelComCuradoria } from "@/lib/database.types";
@@ -50,6 +54,7 @@ export function ImovelCard({
     clienteId
   );
   const selecionado = Boolean(imovel.selecionado_apresentacao);
+  const remover = removeImovelDaCuradoria.bind(null, imovel.curadoria_id, clienteId);
 
   return (
     <div
@@ -204,6 +209,16 @@ export function ImovelCard({
             consideração”.
           </p>
         )}
+
+        <div className="mt-2 flex justify-end">
+          <ConfirmSubmitButton
+            action={remover}
+            confirmMessage={`Remover "${titulo}" da busca deste cliente? Isso também apaga visitas, negociações e due diligence feitas para este imóvel nesta busca.`}
+            className="text-xs text-red-700 hover:underline"
+          >
+            Remover da busca
+          </ConfirmSubmitButton>
+        </div>
       </div>
     </div>
   );

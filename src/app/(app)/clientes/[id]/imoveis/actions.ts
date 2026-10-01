@@ -292,6 +292,16 @@ export async function updateComissaoCombinada(
   revalidatePath(`/clientes/${clienteId}/imoveis/${curadoriaId}`);
 }
 
+export async function removeImovelDaCuradoria(
+  curadoriaId: string,
+  clienteId: string
+) {
+  const supabase = await createClient();
+  await supabase.from("imovel_encontrado").delete().eq("id", curadoriaId);
+
+  revalidatePath(`/clientes/${clienteId}`);
+}
+
 export async function addMidiaPropria(
   curadoriaId: string,
   clienteId: string,
