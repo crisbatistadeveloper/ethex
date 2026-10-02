@@ -8,7 +8,7 @@ Referência local, não versionada. As variáveis reais ficam em `.env.local`
 
 - Projeto: `cris.4mind@gmail.com's Project`
 - URL: `https://dpfiugqvozouoyfcsjbj.supabase.co`
-- Migrações aplicadas: `0001` a `0023` (a `0024` pendente — ver abaixo)
+- Migrações aplicadas: `0001` a `0024`
 
 ## Dev/staging (`dev` → só local)
 
@@ -157,4 +157,4 @@ Coluna: `imovel_encontrado.parceiro_id`.
 - Guarda só o que não existe em outro módulo: contato feito, parceria 50/50 (pendente/confirmada/recusada + condições), situação dos imóveis confirmada, chave/acesso combinado (+ detalhe) e observações
 - Visita prévia e visita com o cliente **não são duplicadas**: a tela lê `visita_previa` e `visita_cliente` dos imóveis do grupo
 - RLS: dono da oportunidade ou admin (padrão 0007)
-- **Aplicada no ethex-dev. Pendente em produção** (rodar junto do merge `dev` → `main`)
+- **Aplicada em produção e no ethex-dev**
