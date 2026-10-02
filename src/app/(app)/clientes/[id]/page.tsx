@@ -13,12 +13,17 @@ import {
 } from "@/lib/labels";
 import { labelCriterio } from "@/lib/scoring-criteria";
 import { buildGoogleSearchUrl } from "@/lib/search-query";
+import { ContatosDaBusca } from "@/components/ContatosDaBusca";
 import { ImovelCard } from "@/components/ImovelCard";
+import type { ImovelDaBusca } from "@/lib/contato-busca";
+import { carregarContatosDaBusca } from "@/lib/contato-busca-dados";
+import { oportunidadeDoCliente } from "@/lib/oportunidade-do-cliente";
 import type {
   ClienteRow,
   ImovelComCuradoria,
   ImovelRow,
   PerfilRow,
+  VisitaClienteRow,
 } from "@/lib/database.types";
 
 interface CuradoriaComImovel {
@@ -27,6 +32,7 @@ interface CuradoriaComImovel {
   status_curadoria: ImovelComCuradoria["status_curadoria"];
   comissao_combinada: boolean;
   selecionado_apresentacao: boolean | null;
+  parceiro_id: string | null;
   imovel: ImovelRow;
 }
 
@@ -46,6 +52,7 @@ export default async function ClienteDetalhePage({
   // Só volta para a oportunidade se ela for deste cliente (e visível pela RLS).
   let voltarHref = "/clientes";
   let voltarLabel = "← Voltar";
+  let oportunidadeOrigemId: string | null = null;
   if (oportunidadeParam && UUID.test(oportunidadeParam)) {
     const { data: origem } = await supabase
       .from("oportunidade")
@@ -56,6 +63,7 @@ export default async function ClienteDetalhePage({
     if (origem) {
       voltarHref = `/crm/${origem.id}`;
       voltarLabel = "← Voltar para oportunidade";
+      oportunidadeOrigemId = origem.id as string;
     }
   }
 
@@ -75,7 +83,7 @@ export default async function ClienteDetalhePage({
     .returns<PerfilRow[]>()
     .maybeSingle();
 
-  let imoveis: ImovelComCuradoria[] = [];
+  let imoveis: ImovelDaBusca[] = [];
   if (perfil) {
     const { data: buscas } = await supabase
       .from("busca")
@@ -86,7 +94,7 @@ export default async function ClienteDetalhePage({
       const { data } = await supabase
         .from("imovel_encontrado")
         .select(
-          "id, score, status_curadoria, comissao_combinada, selecionado_apresentacao, imovel(*)"
+          "id, score, status_curadoria, comissao_combinada, selecionado_apresentacao, parceiro_id, imovel(*)"
         )
         .in("busca_id", buscaIds)
         .order("id", { ascending: false })
@@ -98,8 +106,26 @@ export default async function ClienteDetalhePage({
         status_curadoria: c.status_curadoria,
         comissao_combinada: c.comissao_combinada,
         selecionado_apresentacao: Boolean(c.selecionado_apresentacao),
+        parceiro_id: c.parceiro_id,
       }));
     }
+  }
+
+  // O roteiro por contato é da oportunidade: a de origem, senão a de referência do cliente.
+  const oportunidadeId =
+    oportunidadeOrigemId ?? (await oportunidadeDoCliente(supabase, id))?.id ?? null;
+  let contatosDaBusca: Awaited<ReturnType<typeof carregarContatosDaBusca>> | null = null;
+  if (oportunidadeId && imoveis.length > 0) {
+    const { data: visitasCliente } = await supabase
+      .from("visita_cliente")
+      .select("imovel_encontrado_id, status")
+      .eq("cliente_id", id)
+      .returns<Pick<VisitaClienteRow, "imovel_encontrado_id" | "status">[]>();
+    contatosDaBusca = await carregarContatosDaBusca(supabase, {
+      oportunidadeId,
+      imoveis,
+      visitasCliente: visitasCliente ?? [],
+    });
   }
 
   return (
@@ -263,7 +289,18 @@ export default async function ClienteDetalhePage({
           </p>
         )}
 
-        {imoveis.length > 0 && (
+        {imoveis.length > 0 && oportunidadeId && contatosDaBusca && (
+          <ContatosDaBusca
+            grupos={contatosDaBusca.grupos}
+            contatos={contatosDaBusca.contatos}
+            visitas={contatosDaBusca.visitas}
+            oportunidadeId={oportunidadeId}
+            clienteId={cliente.id}
+            voltar={`/clientes/${cliente.id}`}
+          />
+        )}
+
+        {imoveis.length > 0 && !contatosDaBusca && (
           <div className="mt-4 space-y-3">
             {imoveis.map((imovel) => (
               <ImovelCard

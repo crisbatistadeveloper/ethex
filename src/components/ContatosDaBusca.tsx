@@ -28,19 +28,24 @@ export function ContatosDaBusca({
   visitas,
   oportunidadeId,
   clienteId,
-  escolhidaCuradoriaId,
-  tituloPorCuradoria,
-  editavel,
+  voltar,
+  escolha,
 }: {
   grupos: GrupoContato[];
   contatos: Map<string, ContatoOportunidadeRow>;
   visitas: Map<string, VisitasDoGrupo>;
   oportunidadeId: string;
   clienteId: string;
-  escolhidaCuradoriaId: string | null;
-  tituloPorCuradoria: Map<string, string>;
-  editavel: boolean;
+  /** Rota da tela atual: onde as ações voltam e que é atualizada após salvar. */
+  voltar: string;
+  /** Só na oportunidade: destaca o imóvel escolhido e permite escolher. */
+  escolha?: {
+    escolhidaCuradoriaId: string | null;
+    tituloPorCuradoria: Map<string, string>;
+    editavel: boolean;
+  };
 }) {
+  const escolhidaCuradoriaId = escolha?.escolhidaCuradoriaId ?? null;
   const salvar = salvarContatoOportunidade.bind(null, oportunidadeId);
 
   return (
@@ -156,6 +161,7 @@ export function ContatosDaBusca({
               >
                 <input type="hidden" name="chave" value={grupo.chave} />
                 <input type="hidden" name="nome" value={grupo.nome} />
+                <input type="hidden" name="voltar" value={voltar} />
 
                 <div>
                   <label className={labelClass} htmlFor={`telefone-${grupo.chave}`}>
@@ -318,16 +324,21 @@ export function ContatosDaBusca({
                       key={imovel.curadoria_id}
                       imovel={imovel}
                       clienteId={clienteId}
-                      escolha={{
-                        escolhido: imovel.curadoria_id === escolhidaCuradoriaId,
-                        outroEscolhidoTitulo:
-                          escolhidaCuradoriaId &&
-                          escolhidaCuradoriaId !== imovel.curadoria_id
-                            ? (tituloPorCuradoria.get(escolhidaCuradoriaId) ?? "outro imóvel")
-                            : null,
-                        voltar: `/crm/${oportunidadeId}`,
-                        editavel,
-                      }}
+                      escolha={
+                        escolha
+                          ? {
+                              escolhido: imovel.curadoria_id === escolhidaCuradoriaId,
+                              outroEscolhidoTitulo:
+                                escolhidaCuradoriaId &&
+                                escolhidaCuradoriaId !== imovel.curadoria_id
+                                  ? (escolha.tituloPorCuradoria.get(escolhidaCuradoriaId) ??
+                                    "outro imóvel")
+                                  : null,
+                              voltar,
+                              editavel: escolha.editavel,
+                            }
+                          : undefined
+                      }
                     />
                   ))}
               </div>

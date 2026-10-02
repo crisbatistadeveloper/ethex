@@ -84,4 +84,6 @@ export async function salvarContatoOportunidade(
   }
 
   revalidatePath(volta);
+  const origem = strField(formData, "voltar");
+  if (origem && origem.startsWith("/") && origem !== volta) revalidatePath(origem);
 }

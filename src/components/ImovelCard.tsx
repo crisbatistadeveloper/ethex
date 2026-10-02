@@ -82,7 +82,7 @@ export function ImovelCard({
 
       <div className="min-w-0 flex-1">
         <div className="flex items-start justify-between gap-2">
-          <div>
+          <div className="min-w-0 [overflow-wrap:anywhere]">
             <Link
               href={`/clientes/${clienteId}/imoveis/${imovel.curadoria_id}`}
               className="font-medium text-[#0b1f34] hover:underline"
