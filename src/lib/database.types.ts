@@ -742,3 +742,21 @@ export interface ApresentacaoItemRow {
   criado_em: string;
   atualizado_em: string;
 }
+
+export type ContatoParceriaStatus = "pendente" | "confirmada" | "recusada";
+
+export interface ContatoOportunidadeRow {
+  id: string;
+  oportunidade_id: string;
+  chave: string;
+  nome: string;
+  contatado_em: string | null;
+  parceria_status: ContatoParceriaStatus;
+  parceria_detalhe: string | null;
+  situacao_confirmada_em: string | null;
+  chave_combinada_em: string | null;
+  chave_detalhe: string | null;
+  observacoes: string | null;
+  criado_em: string;
+  atualizado_em: string;
+}

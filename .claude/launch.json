@@ -8,6 +8,12 @@
       "port": 3000
     },
     {
+      "name": "ethex-dev-webpack",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["next", "dev", "--webpack"],
+      "port": 3000
+    },
+    {
       "name": "em-breve",
       "runtimeExecutable": "npx",
       "runtimeArgs": ["--yes", "serve", "landing-em-breve", "-l", "4100"],

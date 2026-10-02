@@ -1,7 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { ImovelCard } from "@/components/ImovelCard";
+import { ContatosDaBusca } from "@/components/ContatosDaBusca";
+import {
+  agruparPorContato,
+  type ImovelDaBusca,
+  type ParceiroResumo,
+  type VisitasDoGrupo,
+} from "@/lib/contato-busca";
 import {
   createAtividade,
   toggleAtividadeStatus,
@@ -54,8 +60,10 @@ import type {
   AtividadeRow,
   BuscaRow,
   ClienteRow,
+  ContatoOportunidadeRow,
   ImovelComCuradoria,
   ImovelRow,
+  VisitaPreviaRow,
   OportunidadeHistoricoRow,
   OportunidadeRow,
   PerfilRow,
@@ -80,6 +88,7 @@ interface CuradoriaComImovel {
   status_curadoria: ImovelComCuradoria["status_curadoria"];
   comissao_combinada: boolean;
   selecionado_apresentacao: boolean | null;
+  parceiro_id: string | null;
   imovel: ImovelRow;
 }
 
@@ -132,7 +141,7 @@ export default async function OportunidadeDetalhePage({
   if (!cliente) notFound();
 
   let busca: BuscaRow | null = null;
-  let imoveis: ImovelComCuradoria[] = [];
+  let imoveis: ImovelDaBusca[] = [];
 
   if (perfil) {
     const { data: buscas } = await supabase
@@ -148,7 +157,7 @@ export default async function OportunidadeDetalhePage({
       const { data } = await supabase
         .from("imovel_encontrado")
         .select(
-          "id, score, status_curadoria, comissao_combinada, selecionado_apresentacao, imovel(*)"
+          "id, score, status_curadoria, comissao_combinada, selecionado_apresentacao, parceiro_id, imovel(*)"
         )
         .eq("busca_id", busca.id)
         .order("id", { ascending: false })
@@ -160,6 +169,7 @@ export default async function OportunidadeDetalhePage({
         status_curadoria: c.status_curadoria,
         comissao_combinada: c.comissao_combinada,
         selecionado_apresentacao: Boolean(c.selecionado_apresentacao),
+        parceiro_id: c.parceiro_id,
       }));
     }
   }
@@ -234,6 +244,73 @@ export default async function OportunidadeDetalhePage({
     }
   }
   const visitasCliente = await comContexto(supabase, visitasRaw ?? []);
+  const parceiroIds = [
+    ...new Set(
+      imoveis.map((i) => i.parceiro_id).filter((p): p is string => Boolean(p))
+    ),
+  ];
+  const parceirosPorId = new Map<string, ParceiroResumo>();
+  if (parceiroIds.length > 0) {
+    const { data } = await supabase
+      .from("parceiro")
+      .select("id, nome, imobiliaria_nome, modelo_divisao, whatsapp, contato_telefone")
+      .in("id", parceiroIds)
+      .returns<ParceiroResumo[]>();
+    for (const p of data ?? []) parceirosPorId.set(p.id, p);
+  }
+  const gruposContato = agruparPorContato(imoveis, parceirosPorId);
+
+  const { data: contatosRaw } = await supabase
+    .from("contato_oportunidade")
+    .select("*")
+    .eq("oportunidade_id", id)
+    .returns<ContatoOportunidadeRow[]>();
+  const contatosPorChave = new Map(
+    (contatosRaw ?? []).map((c) => [c.chave, c] as const)
+  );
+
+  let previas: Pick<VisitaPreviaRow, "imovel_id" | "status">[] = [];
+  if (imoveis.length > 0) {
+    const { data } = await supabase
+      .from("visita_previa")
+      .select("imovel_id, status")
+      .in(
+        "imovel_id",
+        imoveis.map((i) => i.id)
+      )
+      .returns<Pick<VisitaPreviaRow, "imovel_id" | "status">[]>();
+    previas = data ?? [];
+  }
+  const visitasPorGrupo = new Map<string, VisitasDoGrupo>();
+  for (const g of gruposContato) {
+    const imovelIds = new Set(g.imoveis.map((i) => i.id));
+    const curadoriaIds = new Set(g.imoveis.map((i) => i.curadoria_id));
+    const previaRealizada = new Set(
+      previas
+        .filter((p) => imovelIds.has(p.imovel_id) && p.status === "realizada")
+        .map((p) => p.imovel_id)
+    );
+    const previaAgendada = new Set(
+      previas
+        .filter((p) => imovelIds.has(p.imovel_id) && p.status === "agendada")
+        .map((p) => p.imovel_id)
+    );
+    for (const idRealizada of previaRealizada) previaAgendada.delete(idRealizada);
+    const doGrupo = (visitasRaw ?? []).filter((v) =>
+      curadoriaIds.has(v.imovel_encontrado_id)
+    );
+    visitasPorGrupo.set(g.chave, {
+      total: g.imoveis.length,
+      previaRealizada: previaRealizada.size,
+      previaAgendada: previaAgendada.size,
+      clienteAgendada: new Set(
+        doGrupo.filter((v) => v.status === "agendada").map((v) => v.imovel_encontrado_id)
+      ).size,
+      clienteRealizada: new Set(
+        doGrupo.filter((v) => v.status === "realizada").map((v) => v.imovel_encontrado_id)
+      ).size,
+    });
+  }
   const visitasPendentes = visitasCliente.filter((v) => v.status === "solicitada").length;
   const podeAvancarVisita =
     oportunidade.status === "aberta" &&
@@ -380,7 +457,7 @@ export default async function OportunidadeDetalhePage({
       )}
 
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
-        <div className="space-y-6 lg:col-span-2">
+        <div className="min-w-0 space-y-6 lg:col-span-2">
           <section className="rounded-lg border border-[#e4e0d9] bg-white p-4">
             <h2 className="text-sm font-semibold text-[#0b1f34]">Pipeline</h2>
             <div className="mt-3 flex flex-wrap items-end gap-4">
@@ -521,30 +598,16 @@ export default async function OportunidadeDetalhePage({
               </p>
             )}
             {imoveis.length > 0 && (
-              <div className="mt-3 space-y-3">
-                {[...imoveis]
-                  .sort(
-                    (a, b) =>
-                      Number(b.curadoria_id === escolhida?.imovel_encontrado_id) -
-                      Number(a.curadoria_id === escolhida?.imovel_encontrado_id)
-                  )
-                  .map((imovel) => (
-                    <ImovelCard
-                      key={imovel.curadoria_id}
-                      imovel={imovel}
-                      clienteId={cliente.id}
-                      escolha={{
-                        escolhido: imovel.curadoria_id === escolhida?.imovel_encontrado_id,
-                        outroEscolhidoTitulo:
-                          escolhida && escolhida.imovel_encontrado_id !== imovel.curadoria_id
-                            ? (tituloPorCuradoria.get(escolhida.imovel_encontrado_id) ?? "outro imóvel")
-                            : null,
-                        voltar: `/crm/${id}`,
-                        editavel: oportunidade.status === "aberta",
-                      }}
-                    />
-                  ))}
-              </div>
+              <ContatosDaBusca
+                grupos={gruposContato}
+                contatos={contatosPorChave}
+                visitas={visitasPorGrupo}
+                oportunidadeId={id}
+                clienteId={cliente.id}
+                escolhidaCuradoriaId={escolhida?.imovel_encontrado_id ?? null}
+                tituloPorCuradoria={tituloPorCuradoria}
+                editavel={oportunidade.status === "aberta"}
+              />
             )}
           </section>
 
