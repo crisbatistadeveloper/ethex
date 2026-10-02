@@ -8,7 +8,7 @@ Referência local, não versionada. As variáveis reais ficam em `.env.local`
 
 - Projeto: `cris.4mind@gmail.com's Project`
 - URL: `https://dpfiugqvozouoyfcsjbj.supabase.co`
-- Migrações aplicadas: `0001` a `0024` (a `0025` pendente — ver abaixo)
+- Migrações aplicadas: `0001` a `0025`
 
 ## Dev/staging (`dev` → só local)
 
@@ -163,4 +163,4 @@ Coluna: `imovel_encontrado.parceiro_id`.
 
 - `contato_oportunidade.telefone`: telefone/WhatsApp informado à mão (muitos anúncios vêm sem telefone); tem prioridade sobre o do anúncio/parceiro
 - Agrupamento por contato passou a ignorar acento/caixa/termos genéricos ("Imóveis", "Ltda") e a unir grupos com o mesmo telefone
-- **Aplicada no ethex-dev. Pendente em produção** (rodar antes do merge `dev` → `main`)
+- **Aplicada em produção e no ethex-dev**
