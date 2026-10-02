@@ -58,7 +58,7 @@ export function ImovelCard({
 
   return (
     <div
-      className={`relative flex gap-4 rounded-lg border bg-white p-4 ${
+      className={`relative flex flex-col gap-3 rounded-lg border bg-white p-3 sm:flex-row sm:gap-4 sm:p-4 ${
         escolhido
           ? "border-emerald-400 bg-emerald-50/40 ring-2 ring-emerald-200"
           : "border-[#e4e0d9]"
@@ -69,7 +69,7 @@ export function ImovelCard({
           ✓ Imóvel escolhido pelo cliente
         </span>
       )}
-      <div className="h-24 w-32 shrink-0 overflow-hidden rounded-md bg-[#efe9e0]">
+      <div className="h-40 w-full shrink-0 overflow-hidden rounded-md bg-[#efe9e0] sm:h-24 sm:w-32">
         {imagem ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={imagem} alt="" className="h-full w-full object-cover" />
@@ -81,8 +81,8 @@ export function ImovelCard({
       </div>
 
       <div className="min-w-0 flex-1">
-        <div className="flex items-start justify-between gap-2">
-          <div className="min-w-0 [overflow-wrap:anywhere]">
+        <div className="flex flex-wrap items-start justify-between gap-2">
+          <div className="min-w-0 flex-1 basis-40 [overflow-wrap:anywhere]">
             <Link
               href={`/clientes/${clienteId}/imoveis/${imovel.curadoria_id}`}
               className="font-medium text-[#0b1f34] hover:underline"

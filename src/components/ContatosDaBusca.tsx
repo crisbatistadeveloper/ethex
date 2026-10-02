@@ -49,7 +49,7 @@ export function ContatosDaBusca({
   const salvar = salvarContatoOportunidade.bind(null, oportunidadeId);
 
   return (
-    <div className="mt-3 space-y-4">
+    <div className="mt-3 space-y-3 sm:space-y-4">
       {grupos.map((grupo) => {
         const contato = contatos.get(grupo.chave) ?? null;
         const v = visitas.get(grupo.chave) ?? {
@@ -100,7 +100,7 @@ export function ContatosDaBusca({
               </div>
             </summary>
 
-            <div className="space-y-4 border-t border-[#e4e0d9] bg-white p-4">
+            <div className="space-y-4 border-t border-[#e4e0d9] bg-white p-2 sm:p-4">
               <ol className="flex flex-wrap gap-1.5">
                 {etapas.map((e) => (
                   <li

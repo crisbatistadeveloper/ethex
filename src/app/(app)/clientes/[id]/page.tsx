@@ -253,7 +253,7 @@ export default async function ClienteDetalhePage({
 
       <section
         id="imoveis"
-        className="mt-6 scroll-mt-6 rounded-lg border border-[#e4e0d9] bg-white p-6"
+        className="mt-6 scroll-mt-6 rounded-lg border border-[#e4e0d9] bg-white p-3 sm:p-6"
       >
         <div className="flex items-center justify-between gap-2">
           <h2 className="text-lg font-semibold">Imóveis</h2>
