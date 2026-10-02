@@ -61,6 +61,7 @@ export async function salvarContatoOportunidade(
       oportunidade_id: oportunidadeId,
       chave,
       nome,
+      telefone: strField(formData, "telefone"),
       contatado_em: carimbo(boolField(formData, "contatado"), atual?.contatado_em),
       parceria_status: parceria,
       parceria_detalhe: strField(formData, "parceria_detalhe"),

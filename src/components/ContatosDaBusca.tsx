@@ -57,8 +57,9 @@ export function ContatosDaBusca({
         const etapas = etapasDoContato(contato, v);
         const feitas = etapas.filter((e) => e.feita).length;
         const parceria: ContatoParceriaStatus = contato?.parceria_status ?? "pendente";
+        const telefone = contato?.telefone?.trim() || grupo.telefone;
         const whatsapp = linkWhatsapp(
-          grupo.telefone,
+          telefone,
           mensagemWhatsappContato(grupo.imoveis)
         );
 
@@ -79,7 +80,7 @@ export function ContatosDaBusca({
                 <p className="ml-5 text-xs text-[#5b6472]">
                   {grupo.imoveis.length}{" "}
                   {grupo.imoveis.length === 1 ? "imóvel" : "imóveis"}
-                  {grupo.telefone ? ` · ${grupo.telefone}` : ""}
+                  {telefone ? ` · ${telefone}` : ""}
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-2">
@@ -121,13 +122,15 @@ export function ContatosDaBusca({
                     Chamar no WhatsApp
                   </a>
                 ) : (
-                  <span className="text-xs text-[#5b6472]">
-                    Sem telefone válido para WhatsApp neste contato.
+                  <span className="rounded-md border border-dashed border-[#d6b072] bg-amber-50 px-3 py-1.5 text-xs text-amber-900">
+                    {telefone
+                      ? "Telefone sem DDD — informe com DDD abaixo para liberar o WhatsApp."
+                      : "Sem telefone — informe abaixo para liberar o WhatsApp."}
                   </span>
                 )}
-                {grupo.telefone && (
+                {telefone && (
                   <a
-                    href={`tel:${grupo.telefone.replace(/[^\d+]/g, "")}`}
+                    href={`tel:${telefone.replace(/[^\d+]/g, "")}`}
                     className="rounded-md border border-[#e4e0d9] px-3 py-1.5 text-xs hover:bg-[#faf8f5]"
                   >
                     Ligar
@@ -153,6 +156,20 @@ export function ContatosDaBusca({
               >
                 <input type="hidden" name="chave" value={grupo.chave} />
                 <input type="hidden" name="nome" value={grupo.nome} />
+
+                <div>
+                  <label className={labelClass} htmlFor={`telefone-${grupo.chave}`}>
+                    Telefone / WhatsApp do contato
+                  </label>
+                  <input
+                    id={`telefone-${grupo.chave}`}
+                    name="telefone"
+                    type="tel"
+                    defaultValue={contato?.telefone ?? grupo.telefone ?? ""}
+                    placeholder="(31) 99999-9999"
+                    className={inputClass}
+                  />
+                </div>
 
                 <label className="flex items-start gap-2 text-sm">
                   <input

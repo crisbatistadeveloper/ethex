@@ -750,6 +750,7 @@ export interface ContatoOportunidadeRow {
   oportunidade_id: string;
   chave: string;
   nome: string;
+  telefone: string | null;
   contatado_em: string | null;
   parceria_status: ContatoParceriaStatus;
   parceria_detalhe: string | null;

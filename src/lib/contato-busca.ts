@@ -56,35 +56,77 @@ export interface GrupoContato {
   imoveis: ImovelDaBusca[];
 }
 
-function normalizarNome(nome: string): string {
-  return nome
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .toLowerCase()
-    .replace(/\s+/g, " ")
-    .trim();
+/** Termos genéricos que não distinguem um contato de outro ("Loccus" = "Loccus Imóveis Ltda"). */
+const TERMOS_GENERICOS = new Set([
+  "imovel", "imoveis", "imobiliaria", "imobiliarias", "corretor", "corretora",
+  "corretores", "negocios", "ltda", "me", "eireli", "epp", "sa", "cia",
+  "e", "de", "da", "do", "dos", "das", "com", "br", "www",
+]);
+
+function semAcentos(texto: string): string {
+  return texto.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+}
+
+/** Nome comparável: sem acento/caixa/pontuação e sem termos genéricos. */
+export function normalizarNome(nome: string): string {
+  const palavras = semAcentos(nome)
+    .replace(/[^a-z0-9]+/g, " ")
+    .split(" ")
+    .filter(Boolean);
+  const distintivas = palavras.filter((p) => !TERMOS_GENERICOS.has(p));
+  return (distintivas.length > 0 ? distintivas : palavras).join(" ");
+}
+
+/** Chave de comparação de telefone: só dígitos, sem DDI 55; null se curto demais. */
+function chaveTelefone(telefone: string | null | undefined): string | null {
+  if (!telefone) return null;
+  let digitos = telefone.replace(/\D/g, "");
+  if (digitos.length > 11 && digitos.startsWith("55")) digitos = digitos.slice(2);
+  return digitos.length >= 8 ? digitos : null;
 }
 
 function nomeParceiro(p: ParceiroResumo): string {
   return p.imobiliaria_nome ? `${p.nome} / ${p.imobiliaria_nome}` : p.nome;
 }
 
+interface GrupoBruto {
+  chave: string;
+  nome: string;
+  parceiro: ParceiroResumo | null;
+  imoveis: ImovelDaBusca[];
+  telefones: string[];
+}
+
 /**
- * Agrupa os imóveis por contato: parceiro vinculado na curadoria → nome do
- * contato do anúncio → "sem contato". Grupos em ordem alfabética, "sem
- * contato" por último; dentro do grupo, mantém a ordem recebida.
+ * Agrupa os imóveis por contato. Chave inicial: parceiro vinculado na curadoria
+ * → nome do contato do anúncio (normalizado) → telefone → "sem contato".
+ * Depois une grupos que compartilham o mesmo telefone (mesma imobiliária com o
+ * nome escrito de formas diferentes). A chave final é estável: a do parceiro,
+ * ou a menor em ordem alfabética. Grupos em ordem alfabética, "sem contato"
+ * por último; dentro do grupo, mantém a ordem recebida.
  */
 export function agruparPorContato(
   imoveis: ImovelDaBusca[],
   parceiros: Map<string, ParceiroResumo>
 ): GrupoContato[] {
-  const grupos = new Map<string, GrupoContato>();
+  const brutos = new Map<string, GrupoBruto>();
+
+  // Nome do anúncio igual ao da imobiliária (ou do parceiro) já vinculado nesta busca.
+  const parceiroPorNome = new Map<string, ParceiroResumo>();
+  for (const p of parceiros.values()) {
+    for (const n of [p.imobiliaria_nome, p.nome]) {
+      const k = n ? normalizarNome(n) : "";
+      if (k && !parceiroPorNome.has(k)) parceiroPorNome.set(k, p);
+    }
+  }
 
   for (const imovel of imoveis) {
-    const parceiro = imovel.parceiro_id
-      ? (parceiros.get(imovel.parceiro_id) ?? null)
-      : null;
     const nomeAnuncio = imovel.nome_contato?.trim() || null;
+    const parceiro =
+      (imovel.parceiro_id ? parceiros.get(imovel.parceiro_id) : null) ??
+      (nomeAnuncio ? parceiroPorNome.get(normalizarNome(nomeAnuncio)) : null) ??
+      null;
+    const telAnuncio = imovel.telefone_contato?.trim() || null;
 
     let chave: string;
     let nome: string;
@@ -94,25 +136,77 @@ export function agruparPorContato(
     } else if (nomeAnuncio) {
       chave = `nome:${normalizarNome(nomeAnuncio)}`;
       nome = nomeAnuncio;
+    } else if (chaveTelefone(telAnuncio)) {
+      chave = `tel:${chaveTelefone(telAnuncio)}`;
+      nome = `Contato ${telAnuncio}`;
     } else {
       chave = CHAVE_SEM_CONTATO;
       nome = "Sem contato identificado";
     }
 
-    let grupo = grupos.get(chave);
+    let grupo = brutos.get(chave);
     if (!grupo) {
-      grupo = { chave, nome, telefone: null, parceiro, imoveis: [] };
-      grupos.set(chave, grupo);
+      grupo = { chave, nome, parceiro, imoveis: [], telefones: [] };
+      brutos.set(chave, grupo);
     }
     grupo.imoveis.push(imovel);
-    grupo.telefone ??=
-      imovel.telefone_contato?.trim() ||
-      parceiro?.whatsapp?.trim() ||
-      parceiro?.contato_telefone?.trim() ||
-      null;
+    for (const t of [
+      telAnuncio,
+      parceiro?.whatsapp?.trim(),
+      parceiro?.contato_telefone?.trim(),
+    ]) {
+      if (t && !grupo.telefones.includes(t)) grupo.telefones.push(t);
+    }
   }
 
-  return [...grupos.values()].sort((a, b) => {
+  // União de grupos que compartilham telefone (nunca junta dois parceiros).
+  const lista = [...brutos.values()];
+  const pai = lista.map((_, i) => i);
+  const raiz = (i: number): number => (pai[i] === i ? i : (pai[i] = raiz(pai[i])));
+  const donoDoTelefone = new Map<string, number>();
+  lista.forEach((g, i) => {
+    if (g.chave === CHAVE_SEM_CONTATO) return;
+    for (const t of g.telefones) {
+      const k = chaveTelefone(t);
+      if (!k) continue;
+      const outro = donoDoTelefone.get(k);
+      if (outro === undefined) {
+        donoDoTelefone.set(k, i);
+        continue;
+      }
+      const a = raiz(i);
+      const b = raiz(outro);
+      if (a === b) continue;
+      const doisParceiros = lista[a].parceiro && lista[b].parceiro;
+      if (!doisParceiros) pai[b] = a;
+    }
+  });
+
+  const finais = new Map<number, GrupoBruto[]>();
+  lista.forEach((g, i) => {
+    const r = raiz(i);
+    finais.set(r, [...(finais.get(r) ?? []), g]);
+  });
+
+  const grupos: GrupoContato[] = [];
+  for (const partes of finais.values()) {
+    const comParceiro = partes.find((g) => g.parceiro);
+    const ordenadas = [...partes].sort((a, b) => a.chave.localeCompare(b.chave));
+    const principal = comParceiro ?? ordenadas[0];
+    const imoveisDoGrupo = lista
+      .flatMap((g) => (partes.includes(g) ? g.imoveis : []))
+      .sort((a, b) => imoveis.indexOf(a) - imoveis.indexOf(b));
+    const telefones = partes.flatMap((g) => g.telefones);
+    grupos.push({
+      chave: principal.chave,
+      nome: principal.nome,
+      telefone: telefones[0] ?? null,
+      parceiro: comParceiro?.parceiro ?? null,
+      imoveis: imoveisDoGrupo,
+    });
+  }
+
+  return grupos.sort((a, b) => {
     if (a.chave === CHAVE_SEM_CONTATO) return 1;
     if (b.chave === CHAVE_SEM_CONTATO) return -1;
     return a.nome.localeCompare(b.nome, "pt-BR");
